@@ -26,7 +26,7 @@ func InitMySQL() {
 		},
 	)
 	// ----------------------- 连接数据库 -----------------------
-	dsn := "root:123456@tcp(127.0.0.1:3306)/fc?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:Wbq123456!@tcp(47.113.230.181:3306)/fc?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       dsn,
 		DefaultStringSize:         256,
