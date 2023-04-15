@@ -1,4 +1,4 @@
-package my_errors
+package utils
 
 const (
 	//系统部分

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"FurballCommunity_backend/middleware"
+	"FurballCommunity_backend/config/token"
 	"FurballCommunity_backend/models"
 	"errors"
 
@@ -53,7 +53,7 @@ func Login(c *gin.Context) {
 		//3、存在再判断密码是否正确
 		if query_user.Password == user.Password {
 			// 生成token
-			token, err := middleware.CreateToken(middleware.UserInfo{
+			token, err := token.CreateToken(token.UserInfo{
 				ID:       query_user.ID,
 				Username: query_user.Username,
 				Account:  query_user.Account,

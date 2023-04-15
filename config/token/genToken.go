@@ -1,7 +1,7 @@
-package middleware
+package token
 
 import (
-	"FurballCommunity_backend/global/my_errors"
+	"FurballCommunity_backend/utils"
 	"errors"
 	"fmt"
 	"time"
@@ -48,20 +48,20 @@ func ParseToken(tokenString string) (*CustomClaims, error) {
 		return mySigningKey, nil
 	})
 	if token == nil {
-		return nil, errors.New(my_errors.ErrorsTokenInvalid)
+		return nil, errors.New(utils.ErrorsTokenInvalid)
 	}
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				return nil, errors.New(my_errors.ErrorsTokenMalFormed)
+				return nil, errors.New(utils.ErrorsTokenMalFormed)
 			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
-				return nil, errors.New(my_errors.ErrorsTokenNotActiveYet)
+				return nil, errors.New(utils.ErrorsTokenNotActiveYet)
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
 				// 如果 TokenExpired ,只是过期（格式都正确），我们认为他是有效的，接下可以允许刷新操作
 				token.Valid = true
 				goto labelHere
 			} else {
-				return nil, errors.New(my_errors.ErrorsTokenInvalid)
+				return nil, errors.New(utils.ErrorsTokenInvalid)
 			}
 		}
 	}
@@ -69,7 +69,7 @@ labelHere:
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		return claims, nil
 	} else {
-		return nil, errors.New(my_errors.ErrorsTokenInvalid)
+		return nil, errors.New(utils.ErrorsTokenInvalid)
 	}
 }
 
