@@ -5,10 +5,11 @@ import (
 )
 
 type User struct {
-	ID       uint   `gorm:"primary_key" json:"id"`
-	Account  string `json:"account"  binding:"required"`
-	Password string `json:"password"  binding:"required"`
-	Username string `json:"username"`
+	ID        uint   `gorm:"primary_key" json:"id"`
+	Account   string `json:"account"  binding:"required"`
+	Password  string `json:"password"  binding:"required"`
+	Username  string `json:"username"`
+	Authority uint   `json:"authority"`
 }
 
 // 创建用户

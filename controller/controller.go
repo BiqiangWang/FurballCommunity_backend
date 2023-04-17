@@ -78,6 +78,7 @@ func Login(c *gin.Context) {
 	}
 }
 
+// @Router /v1/user/getUserList [get]
 func GetUserList(c *gin.Context) {
 	userList, err := models.GetUserList()
 	if err != nil {
