@@ -1,15 +1,16 @@
 package controller
 
 import (
-	"fmt"
-	"net/http"
-
 	"FurballCommunity_backend/config/token"
 	"FurballCommunity_backend/models"
 	"errors"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
+	_ "github.com/swaggo/swag/example/basic/web"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 // 定义response返回的状态码
@@ -19,7 +20,14 @@ const (
 	resStatusNameRepeat = 2 //返回常量为2，注册用户名重复
 )
 
-// 注册
+// Register 注册
+// @Summary 用户注册
+// @Description 注册一个新的用户
+// @Accept  json
+// @Produce  json
+// @Param   password     path    int     true      "Password"
+// @Success 200 {string} string	"ok"
+// @Router /v1/user/register [post]
 func Register(c *gin.Context) {
 	// 1、从请求中读取数据
 	var user models.User
@@ -41,7 +49,15 @@ func Register(c *gin.Context) {
 	}
 }
 
-// 登录
+// Login 登录
+// @Summary 用户登录
+// @Description 通过id和pw登录
+// @Accept  json
+// @Produce  json
+// @Param   id     path    int     true      "account_id"
+// @Param   password     path    int     true      "Password"
+// @Success 200 {string} string	"ok"
+// @Router /v1/user/login [post]
 func Login(c *gin.Context) {
 	// 1、从请求中读取数据
 	var user models.User
@@ -78,6 +94,12 @@ func Login(c *gin.Context) {
 	}
 }
 
+// GetUserList
+// @Summary 获取用户列表
+// @Description 获取所有用户信息
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} string	"ok"
 // @Router /v1/user/getUserList [get]
 func GetUserList(c *gin.Context) {
 	userList, err := models.GetUserList()
@@ -90,6 +112,15 @@ func GetUserList(c *gin.Context) {
 	}
 }
 
+// UpdateUserName
+// @Summary 更改用户名
+// @Description 通过id，修改用户名
+// @Accept  json
+// @Produce  json
+// @Param   id     path    int     true      "account_id"
+// @Param   username     path    string     true      "new_name"
+// @Success 200 {string} string	"ok"
+// @Router /v1/user/updateUsername [put]
 func UpdateUserName(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -112,6 +143,14 @@ func UpdateUserName(c *gin.Context) {
 	}
 }
 
+// UpdatePassword
+// @Summary 更改密码
+// @Description 通过id，修改密码
+// @Accept  json
+// @Produce  json
+// @Param   id     path    int     true      "account_id"
+// @Param   password     path    string     true      "new_pw"
+// @Router /v1/user/updatePassword [put]
 func UpdatePassword(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -134,6 +173,13 @@ func UpdatePassword(c *gin.Context) {
 	}
 }
 
+// DeleteUser
+// @Summary 删除用户
+// @Description 通过id，删除用户
+// @Accept  json
+// @Produce  json
+// @Param   id     path    int     true      "account_id"
+// @Router /v1/user/deleteUser [delete]
 func DeleteUser(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -149,7 +195,7 @@ func DeleteUser(c *gin.Context) {
 	}
 }
 
-// 设置默认路由当访问一个错误网站时返回
+// NotFound 设置默认路由当访问一个错误网站时返回
 func NotFound(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{
 		"status": 404,

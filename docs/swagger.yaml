@@ -1,4 +1,120 @@
 info:
   contact: {}
-paths: {}
+  title: 毛球社区
+paths:
+  /v1/user/deleteUser:
+    delete:
+      consumes:
+      - application/json
+      description: 通过id，删除用户
+      parameters:
+      - description: account_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 删除用户
+  /v1/user/getUserList:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有用户信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 获取用户列表
+  /v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 通过id和pw登录
+      parameters:
+      - description: account_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 用户登录
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: 注册一个新的用户
+      parameters:
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 用户注册
+  /v1/user/updatePassword:
+    put:
+      consumes:
+      - application/json
+      description: 通过id，修改密码
+      parameters:
+      - description: account_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new_pw
+        in: path
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 更改密码
+  /v1/user/updateUsername:
+    put:
+      consumes:
+      - application/json
+      description: 通过id，修改用户名
+      parameters:
+      - description: account_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new_name
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 更改用户名
 swagger: "2.0"

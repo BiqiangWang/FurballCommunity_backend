@@ -18,7 +18,6 @@ func SetupRouter() *gin.Engine {
 	// router.Static("/", "./public")
 	router.Use(gin.Logger()) // 设置 gin 的日志级别为 Debug
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// v1
 	v1 := router.Group("/v1")
 	{
@@ -31,6 +30,9 @@ func SetupRouter() *gin.Engine {
 		user.DELETE("/deleteUser/:id", controller.DeleteUser)
 		user.GET("/getUserList", controller.GetUserList)
 	}
+
+	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, url))
 
 	err := router.Run(":8080")
 	if err != nil {
