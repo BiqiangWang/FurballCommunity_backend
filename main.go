@@ -2,6 +2,7 @@ package main
 
 import (
 	"FurballCommunity_backend/config/database"
+	"FurballCommunity_backend/models"
 	"FurballCommunity_backend/routers"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -18,7 +19,7 @@ func main() {
 
 	routers.SetupSwagger()
 	// 绑定表
-	//database.DB.AutoMigrate(&models.User{})
+	database.DB.AutoMigrate(&models.User{})
 
 	routers.SetupRouter()
 }

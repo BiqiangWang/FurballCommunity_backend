@@ -1,13 +1,71 @@
 # FurballCommunity_backend
-“Furball Community” is a community-based pet sharing and boarding platform app, which is a course design project.
+“Furball Community” is a community-based pet sharing and boarding platform website, which is a course design project.
 
 
 
 ### 项目架构
 
-- config： 项目配置模块，将集成 mysql、token、redis 等配置部分。
+- config： 项目配置模块，将集成 mysql、swagger、token、redis 等配置部分。
 - controller： 负责请求转发，接受页面过来的参数，传给 Model 处理，接到返回值，再传给页面。
 - models： 对应数据表的增删查改。
 - routers：处理路由。
 - utils：定义项目工具组件，包括错误代码，返回类型等。
 
+
+
+### 表设计
+
+user
+
+| Id     | Password | Name   | Authority                         | Gender       | Address | Score | Intro    | ID_number | Avatar | Pet_experience | Work_time     | Pet_number           | ID_card_photo |
+| ------ | -------- | ------ | --------------------------------- | ------------ | ------- | ----- | -------- | --------- | ------ | -------------- | ------------- | -------------------- | ------------- |
+| 用户id | 用户密码 | 昵称   | 权限                              | 性别         | 地址    | 评分  | 个人介绍 | 身份证号  | 头像   | 养宠经历       | 可工作时间    | 最大同时照顾宠物数量 | 身份证照片    |
+| int    | string   | string | int                               | int          | string  | float | string   | string    | string | string         | Int           | int                  | string        |
+|        |          |        | 0：普通用户  1：可收养  2：管理员 | 0：女  1：男 |         |       |          |           |        |                | 0：<=4  1：>4 |                      |               |
+
+
+
+pet
+
+| Pet_id | User_id | Name   | Gender       | Photo  | Age  | Weight | Sterilization      | Breed  | Health   |
+| ------ | ------- | ------ | ------------ | ------ | ---- | ------ | ------------------ | ------ | -------- |
+| 宠物id | 用户id  | 宠物名 | 性别         | 照片   | 年龄 | 重量   | 是否绝育           | 品种   | 健康状况 |
+| Int    | Int     | string | int          | String | Int  | Int    | Int                | String | String   |
+|        |         |        | 0：母  1：公 |        |      |        | 0：未绝育  1：绝育 |        |          |
+
+
+
+order
+
+| Order_id | Announcer_id | Receiver_id   | Pet_id | Announce_time | Start_time | End_time | Place  | Pet_health | Status                                     | Remark | price | Evaluation    | score |
+| -------- | ------------ | ------------- | ------ | ------------- | ---------- | -------- | ------ | ---------- | ------------------------------------------ | ------ | ----- | ------------- | ----- |
+| 订单id   | 发布者       | 接收者        | 宠物id | 发布时间      | 开始时间   | 结束时间 | 地点   | 健康状况   | 订单状态                                   | 备注   | 报酬  | 评价          | 评分  |
+| int      | int          | int           | int    | time          | time       | time     | string | string     | int                                        | string | Int   | string        | float |
+|          |              | 当status为123 |        |               |            |          |        |            | 0：发布中  1：已接收  2：待评价  3：已评价 |        |       | 仅当status为3 |       |
+
+
+
+order_comment
+
+| Comment_id | Order_id | User_id | Content  | Time | Reply_userid |
+| ---------- | -------- | ------- | -------- | ---- | ------------ |
+| 订单评论id | 订单id   | 用户id  | 评论内容 | 时间 | 母评论用户id |
+| Int        | Int      | Int     | String   | Time | int          |
+
+
+
+blog
+
+| Blog_id | User_id | Content  | Time     | Title    | Banner_list | Like     |
+| ------- | ------- | -------- | -------- | -------- | ----------- | -------- |
+| 文章id  | 用户id  | 正文内容 | 发布时间 | 文章标题 | 轮播图列表  | 文章点赞 |
+| Int     | Int     | String   | Time     | String   | Url_list    | int      |
+
+
+
+blog_comment
+
+| Blog_comment_id | Blog_id | User_id | Time | Content | Avatar | User_name | Like       |
+| --------------- | ------- | ------- | ---- | ------- | ------ | --------- | ---------- |
+| 文章评论id      | 文章id  | 用户id  | 时间 | 内容    | 头像   | 用户名    | 评论点赞数 |
+| Int             | Int     | Int     | Time | String  | String | String    | int        |
