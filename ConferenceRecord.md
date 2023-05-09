@@ -8,6 +8,14 @@
 
 
 
+### second meeting in April 21st
+
+初步明确功能模块及业务功能细节，完成数据库表设计，包括user、pet、order、ordercomment、blog、blogcomment等。开始全面构建后端数据库表和接口。
+
+![meeting4.21](./docs/image/meeting4.21.jpg)
+
+
+
 
 
 ## 工作汇总
@@ -18,4 +26,8 @@
 
 4.15 优化数据库连接，取消自动表构建操作，完成数据库部署。
 
-4.17 初步配置swagger接口文档，拟修改用户表结构
+4.17 初步配置swagger接口文档，拟修改用户表结构。
+
+4.20 完善swagger接口文档配置，实现接口可视化。
+
+4.21 完成数据库表设计。
