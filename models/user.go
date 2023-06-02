@@ -8,7 +8,7 @@ type User struct {
 	ID        uint   `gorm:"primary_key" json:"id"`
 	Account   string `json:"account"  binding:"required"`
 	Password  string `json:"password"  binding:"required"`
-	Username  string `json:"username"`
+	Username  string `json:"username"  default:"请输入用户名"`
 	Authority uint   `json:"authority"`
 }
 
