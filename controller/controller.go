@@ -22,10 +22,10 @@ const (
 
 // Register 注册
 // @Summary 用户注册
-// @Description 注册一个新的用户
+// @Description 注册一个新的用户 eg：{ "account":"wbq", "password":"123" }
 // @Accept  json
 // @Produce  json
-// @Param   password     path    int     true      "Password"
+// @Param   user    body    string   true      "account+password"
 // @Success 200 {string} string	"ok"
 // @Router /v1/user/register [post]
 func Register(c *gin.Context) {
@@ -44,18 +44,17 @@ func Register(c *gin.Context) {
 		if err := models.CreateUser(&user); err != nil {
 			c.JSON(http.StatusCreated, gin.H{"state": resStatusError, "text": err.Error()})
 		} else {
-			c.JSON(http.StatusCreated, gin.H{"state": resStatusSuccess, "text": "注册成功！"})
+			c.JSON(http.StatusCreated, gin.H{"state": resStatusSuccess, "text": "注册成功！", "userid": user.ID})
 		}
 	}
 }
 
 // Login 登录
 // @Summary 用户登录
-// @Description 通过id和pw登录
+// @Description 通过id和pw登录 eg：{ "account":"wbq", "password":"123" }
 // @Accept  json
 // @Produce  json
-// @Param   id     path    int     true      "account_id"
-// @Param   password     path    int     true      "Password"
+// @Param   user    body    string     true      "account+password"
 // @Success 200 {string} string	"ok"
 // @Router /v1/user/login [post]
 func Login(c *gin.Context) {
@@ -114,13 +113,13 @@ func GetUserList(c *gin.Context) {
 
 // UpdateUserName
 // @Summary 更改用户名
-// @Description 通过id，修改用户名
+// @Description 通过id，修改用户名 eg：{"username":"wangwang" }
 // @Accept  json
 // @Produce  json
-// @Param   id     path    int     true      "account_id"
-// @Param   username     path    string     true      "new_name"
+// @Param   id    path    uint     true      "id"
+// @Param   user    body    string     true      "new_name"
 // @Success 200 {string} string	"ok"
-// @Router /v1/user/updateUsername [put]
+// @Router /v1/user/updateUsername/{id} [put]
 func UpdateUserName(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -145,12 +144,12 @@ func UpdateUserName(c *gin.Context) {
 
 // UpdatePassword
 // @Summary 更改密码
-// @Description 通过id，修改密码
+// @Description 通过id，修改密码 eg：{"password":"123" }
 // @Accept  json
 // @Produce  json
-// @Param   id     path    int     true      "account_id"
-// @Param   password     path    string     true      "new_pw"
-// @Router /v1/user/updatePassword [put]
+// @Param   id    path    uint     true      "id"
+// @Param   user    body    string     true      "new_pwd"
+// @Router /v1/user/updatePassword/{id} [put]
 func UpdatePassword(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -175,11 +174,10 @@ func UpdatePassword(c *gin.Context) {
 
 // DeleteUser
 // @Summary 删除用户
-// @Description 通过id，删除用户
+// @Description 通过id，删除用户 eg：{ "id":"7"}
 // @Accept  json
-// @Produce  json
-// @Param   id     path    int     true      "account_id"
-// @Router /v1/user/deleteUser [delete]
+// @Param   id    path    uint     true      "id"
+// @Router /v1/user/deleteUser/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
@@ -199,6 +197,6 @@ func DeleteUser(c *gin.Context) {
 func NotFound(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{
 		"status": 404,
-		"error":  "404 ,page not exists!",
+		"error":  "404 ,url not exists!",
 	})
 }

@@ -2,19 +2,17 @@ info:
   contact: {}
   title: 毛球社区
 paths:
-  /v1/user/deleteUser:
+  /v1/user/deleteUser/{id}:
     delete:
       consumes:
       - application/json
-      description: 通过id，删除用户
+      description: 通过id，删除用户 eg：{ "id":"7"}
       parameters:
-      - description: account_id
+      - description: id
         in: path
         name: id
         required: true
         type: integer
-      produces:
-      - application/json
       responses: {}
       summary: 删除用户
   /v1/user/getUserList:
@@ -34,18 +32,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: 通过id和pw登录
+      description: 通过id和pw登录 eg：{ "account":"wbq", "password":"123" }
       parameters:
-      - description: account_id
-        in: path
-        name: id
+      - description: account+password
+        in: body
+        name: user
         required: true
-        type: integer
-      - description: Password
-        in: path
-        name: password
-        required: true
-        type: integer
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -58,13 +52,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: 注册一个新的用户
+      description: 注册一个新的用户 eg：{ "account":"wbq", "password":"123" }
       parameters:
-      - description: Password
-        in: path
-        name: password
+      - description: account+password
+        in: body
+        name: user
         required: true
-        type: integer
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -73,42 +68,44 @@ paths:
           schema:
             type: string
       summary: 用户注册
-  /v1/user/updatePassword:
+  /v1/user/updatePassword/{id}:
     put:
       consumes:
       - application/json
-      description: 通过id，修改密码
+      description: 通过id，修改密码 eg：{"password":"123" }
       parameters:
-      - description: account_id
+      - description: id
         in: path
         name: id
         required: true
         type: integer
-      - description: new_pw
-        in: path
-        name: password
+      - description: new_pwd
+        in: body
+        name: user
         required: true
-        type: string
+        schema:
+          type: string
       produces:
       - application/json
       responses: {}
       summary: 更改密码
-  /v1/user/updateUsername:
+  /v1/user/updateUsername/{id}:
     put:
       consumes:
       - application/json
-      description: 通过id，修改用户名
+      description: 通过id，修改用户名 eg：{"username":"wangwang" }
       parameters:
-      - description: account_id
+      - description: id
         in: path
         name: id
         required: true
         type: integer
       - description: new_name
-        in: path
-        name: username
+        in: body
+        name: user
         required: true
-        type: string
+        schema:
+          type: string
       produces:
       - application/json
       responses:
