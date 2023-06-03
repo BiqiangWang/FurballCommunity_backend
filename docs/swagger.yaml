@@ -2,6 +2,26 @@ info:
   contact: {}
   title: 毛球社区
 paths:
+  /v1/pet/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加一个新的宠物 eg：{ "pet_name":"xiaohuang", "user_id":2 }
+      parameters:
+      - description: petname + userid
+        in: body
+        name: pet
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 添加宠物
   /v1/user/deleteUser/{id}:
     delete:
       consumes:
