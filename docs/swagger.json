@@ -5,6 +5,37 @@
         "contact": {}
     },
     "paths": {
+        "/v1/pet/add": {
+            "post": {
+                "description": "添加一个新的宠物 eg：{ \"pet_name\":\"xiaohuang\", \"user_id\":2 }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "添加宠物",
+                "parameters": [
+                    {
+                        "description": "petname + userid",
+                        "name": "pet",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/deleteUser/{id}": {
             "delete": {
                 "description": "通过id，删除用户 eg：{ \"id\":\"7\"}",

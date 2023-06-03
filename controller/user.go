@@ -13,11 +13,11 @@ import (
 	"net/http"
 )
 
-// 定义response返回的状态码
+// 定义返回状态码
 const (
-	resStatusError      = 0 //返回常量为0，发生错误
-	resStatusSuccess    = 1 //返回常量为1，成功
-	resStatusNameRepeat = 2 //返回常量为2，注册用户名重复
+	reStatusError      = 0 //返回常量为0，发生错误
+	reStatusSuccess    = 1 //返回常量为1，成功
+	reStatusNameRepeat = 2 //返回常量为2，注册用户名重复
 )
 
 // Register 注册
@@ -37,14 +37,14 @@ func Register(c *gin.Context) {
 	_, err := models.GetUserByAccount(user.Account)
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		//注册用户名已存在，输出状态2
-		c.JSON(http.StatusOK, gin.H{"state": resStatusError, "text": "此用户已存在！"})
+		c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "此用户已存在！"})
 	} else {
 		fmt.Println(user.Account, user.Password)
 		// 3、存入数据库
 		if err := models.CreateUser(&user); err != nil {
-			c.JSON(http.StatusCreated, gin.H{"state": resStatusError, "text": err.Error()})
+			c.JSON(http.StatusCreated, gin.H{"state": reStatusError, "text": err.Error()})
 		} else {
-			c.JSON(http.StatusCreated, gin.H{"state": resStatusSuccess, "text": "注册成功！", "userid": user.ID})
+			c.JSON(http.StatusCreated, gin.H{"state": reStatusSuccess, "text": "注册成功！", "userid": user.UserID})
 		}
 	}
 }
@@ -69,27 +69,27 @@ func Login(c *gin.Context) {
 		if query_user.Password == user.Password {
 			// 生成token
 			token, err := token.CreateToken(token.UserInfo{
-				ID:       query_user.ID,
+				ID:       query_user.UserID,
 				Username: query_user.Username,
 				Account:  query_user.Account,
 			})
 			if err != nil {
-				c.JSON(http.StatusOK, gin.H{"state": resStatusError, "text": err})
+				c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": err})
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{
-				"user_id":  query_user.ID,
+				"user_id":  query_user.UserID,
 				"username": query_user.Username,
-				"state":    resStatusSuccess,
+				"state":    reStatusSuccess,
 				"token":    token,
 				"text":     "登陆成功！",
 			})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"state": resStatusError, "text": "密码错误！"})
+			c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "密码错误！"})
 		}
 	} else {
 		// 用户不存在
-		c.JSON(http.StatusOK, gin.H{"state": resStatusError, "text": "登录失败！此用户尚未注册！"})
+		c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "登录失败！此用户尚未注册！"})
 	}
 }
 
