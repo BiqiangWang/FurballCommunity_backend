@@ -29,6 +29,9 @@ func SetupRouter() *gin.Engine {
 		user.PUT("/updatePassword/:id", controller.UpdatePassword)
 		user.DELETE("/deleteUser/:id", controller.DeleteUser)
 		user.GET("/getUserList", controller.GetUserList)
+
+		pet := v1.Group("/pet")
+		pet.POST("/add", controller.AddPet)
 	}
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")

@@ -16,20 +16,48 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/user/deleteUser": {
-            "delete": {
-                "description": "通过id，删除用户",
+        "/v1/pet/add": {
+            "post": {
+                "description": "添加一个新的宠物 eg：{ \"pet_name\":\"xiaohuang\", \"user_id\":2 }",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
+                "summary": "添加宠物",
+                "parameters": [
+                    {
+                        "description": "petname + userid",
+                        "name": "pet",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/deleteUser/{id}": {
+            "delete": {
+                "description": "通过id，删除用户 eg：{ \"id\":\"7\"}",
+                "consumes": [
+                    "application/json"
+                ],
                 "summary": "删除用户",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "account_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -60,7 +88,7 @@ const docTemplate = `{
         },
         "/v1/user/login": {
             "post": {
-                "description": "通过id和pw登录",
+                "description": "通过id和pw登录 eg：{ \"account\":\"wbq\", \"password\":\"123\" }",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,18 +98,13 @@ const docTemplate = `{
                 "summary": "用户登录",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "account_id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "path",
-                        "required": true
+                        "description": "account+password",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -96,7 +119,7 @@ const docTemplate = `{
         },
         "/v1/user/register": {
             "post": {
-                "description": "注册一个新的用户",
+                "description": "注册一个新的用户 eg：{ \"account\":\"wbq\", \"password\":\"123\" }",
                 "consumes": [
                     "application/json"
                 ],
@@ -106,11 +129,13 @@ const docTemplate = `{
                 "summary": "用户注册",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "path",
-                        "required": true
+                        "description": "account+password",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -123,9 +148,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/updatePassword": {
+        "/v1/user/updatePassword/{id}": {
             "put": {
-                "description": "通过id，修改密码",
+                "description": "通过id，修改密码 eg：{\"password\":\"123\" }",
                 "consumes": [
                     "application/json"
                 ],
@@ -136,25 +161,27 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "account_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "new_pw",
-                        "name": "password",
-                        "in": "path",
-                        "required": true
+                        "description": "new_pwd",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {}
             }
         },
-        "/v1/user/updateUsername": {
+        "/v1/user/updateUsername/{id}": {
             "put": {
-                "description": "通过id，修改用户名",
+                "description": "通过id，修改用户名 eg：{\"username\":\"wangwang\" }",
                 "consumes": [
                     "application/json"
                 ],
@@ -165,17 +192,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "account_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "string",
                         "description": "new_name",
-                        "name": "username",
-                        "in": "path",
-                        "required": true
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
