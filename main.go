@@ -4,14 +4,7 @@ import (
 	"FurballCommunity_backend/config/database"
 	"FurballCommunity_backend/models"
 	"FurballCommunity_backend/routers"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
-
-func Helloworld(g *gin.Context) {
-	g.JSON(http.StatusOK, "helloworld")
-}
 
 // @title 毛球社区
 func main() {
