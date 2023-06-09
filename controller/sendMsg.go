@@ -1,9 +1,10 @@
 // 发送验证码功能
-package utils
+package controller
 
 import (
 	"fmt"
 	"math/rand"
+	"net/http"
 	"time"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -11,7 +12,14 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/credentials-go/credentials"
+	"github.com/gin-gonic/gin"
+
+	"FurballCommunity_backend/utils/redis"
 )
+
+type phoneStruct struct {
+	Phone string `json:"phone"`
+}
 
 /**
  * 使用AK&SK初始化账号Client
@@ -43,19 +51,22 @@ func createClient() (_result *dysmsapi20170525.Client, _err error) {
 	return _result, _err
 }
 
-func SendMsg(phone string) (_err error) {
+func SendMsg(c *gin.Context) {
+	var phone phoneStruct
+	c.BindJSON(&phone)
+
 	// 工程代码泄露可能会导致AccessKey泄露，并威胁账号下所有资源的安全性。
 	// 此处采用的Credential配置凭证，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378661.html
 	client, _err := createClient()
 	if _err != nil {
-		return _err
+		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
 	}
 	// 生成6位数字随机验证码
 	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
 	sendSmsRequest := &dysmsapi20170525.SendSmsRequest{
 		SignName:      tea.String("毛球社区"),
 		TemplateCode:  tea.String("SMS_460725820"),
-		PhoneNumbers:  tea.String(phone),
+		PhoneNumbers:  tea.String(phone.Phone),
 		TemplateParam: tea.String("{\"code\":\"" + code + "\"}"),
 	}
 	runtime := &util.RuntimeOptions{}
@@ -68,9 +79,14 @@ func SendMsg(phone string) (_err error) {
 		// 复制代码运行请自行打印 API 的返回值
 		_, _err = client.SendSmsWithOptions(sendSmsRequest, runtime)
 		if _err != nil {
-			return _err
+			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
 		}
-
+		// 将手机号与验证码保存下来，5分钟有效
+		err := redis.RedisSet(phone.Phone, code, 5*time.Minute)
+		if err != nil {
+			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+		}
+		c.JSON(http.StatusCreated, gin.H{"code": 1, "msg": "success"})
 		return nil
 	}()
 
@@ -84,8 +100,8 @@ func SendMsg(phone string) (_err error) {
 		// 如有需要，请打印 error
 		_, _err = util.AssertAsString(error.Message)
 		if _err != nil {
-			return _err
+			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
 		}
 	}
-	return _err
+	c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
 }
