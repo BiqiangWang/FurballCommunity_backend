@@ -35,7 +35,8 @@ func SetupRouter() *gin.Engine {
 		api.POST("/getUserLocationRadius", controller.GetUserLocationRadius) //获取用户50km半径内照护员位置信息
 
 		user := v1.Group("/user")
-		user.POST("/login", controller.Login)
+		user.POST("/login", controller.Login)                   //账号密码登录
+		user.POST("/loginWithPhone", controller.LoginWithPhone) //手机号登录（自动注册）
 		user.POST("/register", controller.Register)
 		user.PUT("/updateUsername/:id", controller.UpdateUserName)
 		user.PUT("/updatePassword/:id", controller.UpdatePassword)

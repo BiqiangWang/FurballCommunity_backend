@@ -4,13 +4,15 @@ import (
 	"FurballCommunity_backend/config/token"
 	"FurballCommunity_backend/models"
 	"errors"
-	"fmt"
+	"net/http"
+
+	"FurballCommunity_backend/utils/redis"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/swaggo/files"
 	_ "github.com/swaggo/gin-swagger"
 	_ "github.com/swaggo/swag/example/basic/web"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 // 定义返回状态码
@@ -37,19 +39,18 @@ func Register(c *gin.Context) {
 	_, err := models.GetUserByAccount(user.Account)
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		//注册用户名已存在，输出状态2
-		c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "此用户已存在！"})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "此用户已存在！"})
 	} else {
-		fmt.Println(user.Account, user.Password)
 		// 3、存入数据库
 		if err := models.CreateUser(&user); err != nil {
-			c.JSON(http.StatusCreated, gin.H{"state": reStatusError, "text": err.Error()})
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
-			c.JSON(http.StatusCreated, gin.H{"state": reStatusSuccess, "text": "注册成功！", "userid": user.UserID})
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
 		}
 	}
 }
 
-// Login 登录
+// Login 账号密码登录
 // @Summary 用户登录
 // @Description 通过id和pw登录 eg：{ "account":"wbq", "password":"123" }
 // @Accept  json
@@ -74,22 +75,86 @@ func Login(c *gin.Context) {
 				Account:  query_user.Account,
 			})
 			if err != nil {
-				c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": err})
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{
 				"user_id":  query_user.UserID,
 				"username": query_user.Username,
-				"state":    reStatusSuccess,
+				"code":     reStatusSuccess,
 				"token":    token,
-				"text":     "登陆成功！",
+				"msg":      "登陆成功！",
 			})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "密码错误！"})
+			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "密码错误！"})
 		}
 	} else {
 		// 用户不存在
-		c.JSON(http.StatusOK, gin.H{"state": reStatusError, "text": "登录失败！此用户尚未注册！"})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "登录失败！此用户尚未注册！"})
+	}
+}
+
+type phoneParam struct {
+	Phone string `json:"phone"`
+	Code  string `json:"code"`
+}
+
+// Login 手机验证码登录
+// @Summary 用户登录
+// @Description 通过id和pw登录 eg：{ "phone":"13533337492", "code":"123456" }
+// @Accept  json
+// @Produce  json
+// @Param   user    body    string     true      "phone+code"
+// @Success 200 {string} string	"ok"
+// @Router /v1/user/login [post]
+func LoginWithPhone(c *gin.Context) {
+	// 1、从请求中读取数据
+	var param phoneParam
+	c.BindJSON(&param)
+	var user models.User
+	user.Phone = param.Phone
+	//2、先判断用户是否存在
+	query_user, err := models.GetUserByPhone(user.Phone)
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		//3、存在再判断短信验证码是否正确
+		redis_code, err := redis.RedisGet(user.Phone)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+			return
+		}
+		if param.Code == redis_code {
+			// 生成token
+			token, err := token.CreateToken(token.UserInfo{
+				ID:       query_user.UserID,
+				Username: query_user.Username,
+				Account:  query_user.Account,
+			})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
+			c.JSON(http.StatusOK, gin.H{
+				"user":  query_user,
+				"code":  reStatusSuccess,
+				"token": token,
+				"msg":   "登陆成功！",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "验证码错误或已失效！"})
+		}
+	} else {
+		// 用户不存在,则直接注册,初始账号、密码、用户名均设置为手机号
+		// 3、存入数据库
+		user.Account = user.Phone
+		user.Password = user.Phone
+		user.Username = user.Phone
+		if err := models.CreateUser(&user); err != nil {
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
+		} else {
+			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
+		}
 	}
 }
 
@@ -103,9 +168,10 @@ func Login(c *gin.Context) {
 func GetUserList(c *gin.Context) {
 	userList, err := models.GetUserList()
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
 			"list": userList,
 		})
 	}
@@ -123,21 +189,22 @@ func GetUserList(c *gin.Context) {
 func UpdateUserName(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{"error": "无效的id！"})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "无效的id！"})
 		return
 	}
 	user, err := models.GetUserById(id)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 		return
 	}
 	c.BindJSON(&user)
 
 	if err := models.UpdateUserName(user); err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "用户名修改成功！",
+			"code": 1,
+			"meg":  "用户名修改成功！",
 		})
 	}
 }
@@ -153,21 +220,22 @@ func UpdateUserName(c *gin.Context) {
 func UpdatePassword(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{"error": "无效的id！"})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "无效的id！"})
 		return
 	}
 	user, err := models.GetUserById(id)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 		return
 	}
 	c.BindJSON(&user)
 
 	if err := models.UpdatePassword(user); err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "密码修改成功！",
+			"code": 1,
+			"msg":  "密码修改成功！",
 		})
 	}
 }
@@ -181,14 +249,15 @@ func UpdatePassword(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{"error": "无效的id"})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "无效的id"})
 		return
 	}
 	if err := models.DeleteUser(id); err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "删除成功",
+			"code": 1,
+			"msg":  "删除成功",
 		})
 	}
 }
@@ -197,6 +266,6 @@ func DeleteUser(c *gin.Context) {
 func NotFound(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{
 		"status": 404,
-		"error":  "404 ,url not exists!",
+		"msg":    "404 ,url not exists!",
 	})
 }

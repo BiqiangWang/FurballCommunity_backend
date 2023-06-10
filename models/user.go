@@ -8,6 +8,7 @@ type User struct {
 	UserID    uint   `gorm:"primary_key" json:"user_id"`
 	Account   string `json:"account"  binding:"required"`
 	Password  string `json:"password"  binding:"required"`
+	Phone     string `json:"phone"`
 	Username  string `json:"username"  default:"请输入用户名"`
 	Authority uint   `json:"authority"`
 }
@@ -39,6 +40,15 @@ func GetUserById(id string) (user *User, err error) {
 func GetUserByAccount(account string) (user *User, err error) {
 	user = new(User)
 	if err = database.DB.Where("account = ?", account).First(user).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+// 根据phone获取用户
+func GetUserByPhone(phone string) (user *User, err error) {
+	user = new(User)
+	if err = database.DB.Where("phone = ?", phone).First(user).Error; err != nil {
 		return nil, err
 	}
 	return

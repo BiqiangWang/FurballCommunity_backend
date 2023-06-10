@@ -28,6 +28,13 @@ type configJsonBody struct {
 var store = base64Captcha.DefaultMemStore
 
 // base64Captcha create http handler
+// GenerateCaptchaHandler
+// @Summary 获取图形验证码
+// @Description 获取一张图形验证码，同时返回captchaId
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} string	"ok"
+// @Router /v1/api/getCaptcha [get]
 func GenerateCaptchaHandler(c *gin.Context) {
 	var param configJsonBody = configJsonBody{
 		Id:          "",
@@ -61,6 +68,14 @@ func GenerateCaptchaHandler(c *gin.Context) {
     "VerifyValue":"vvsz"
 }
 **/
+// CaptchaVerifyHandle 验证图形验证码
+// @Summary 验证图形验证码
+// @Description 验证图形验证码 eg：{ "CaptchaId":"mFXBu7EueGbtNqsErYdm", "VerifyValue":"vvsz" }
+// @Accept  json
+// @Produce  json
+// @Param   CaptchaVerifyHandle    body    string   true      "CaptchaId+VerifyValue"
+// @Success 200 {string} string	"ok"
+// @Router /v1/api/verifyCaptcha [post]
 func CaptchaVerifyHandle(c *gin.Context) {
 
 	//parse request json body
