@@ -44,7 +44,17 @@ func Register(c *gin.Context) {
 		if err := models.CreateUser(&user); err != nil {
 			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
+			// 生成token
+			token, err := token.CreateToken(token.UserInfo{
+				ID:       user.UserID,
+				Username: user.Username,
+				Account:  user.Account,
+			})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
 		}
 	}
 }
@@ -151,7 +161,17 @@ func LoginWithPhone(c *gin.Context) {
 			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
 			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
+			// 生成token
+			token, err := token.CreateToken(token.UserInfo{
+				ID:       query_user.UserID,
+				Username: query_user.Username,
+				Account:  query_user.Account,
+			})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
 		}
 	}
 }
