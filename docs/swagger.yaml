@@ -22,6 +22,44 @@ paths:
           schema:
             type: string
       summary: 添加宠物
+      tags:
+      - Pet
+  /v1/pet/deletePet/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 通过id，删除宠物 eg：{ "id":"5"}
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses: {}
+      summary: 删除宠物
+      tags:
+      - Pet
+  /v1/pet/getPetInfoByID:
+    get:
+      consumes:
+      - application/json
+      description: 通过宠物id查询宠物信息 eg：{ "pet_id":2 }
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 通过宠物id查询宠物信息
+      tags:
+      - Pet
   /v1/user/deleteUser/{id}:
     delete:
       consumes:

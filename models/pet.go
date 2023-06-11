@@ -67,7 +67,7 @@ func GetPetInfoByName(petName string) (pet *Pet, err error) {
 }
 
 // DeletePet  删除宠物
-func DeletePet(petID uint) (err error) {
+func DeletePet(petID string) (err error) {
 	err = database.DB.Delete(&Pet{}, petID).Error
 	return
 }

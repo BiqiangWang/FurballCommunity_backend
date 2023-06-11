@@ -25,6 +25,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Pet"
+                ],
                 "summary": "添加宠物",
                 "parameters": [
                     {
@@ -35,6 +38,60 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pet/deletePet/{id}": {
+            "delete": {
+                "description": "通过id，删除宠物 eg：{ \"id\":\"5\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "删除宠物",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/pet/getPetInfoByID": {
+            "get": {
+                "description": "通过宠物id查询宠物信息 eg：{ \"pet_id\":2 }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "通过宠物id查询宠物信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
