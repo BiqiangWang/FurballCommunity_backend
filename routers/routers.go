@@ -3,7 +3,6 @@ package routers
 import (
 	"FurballCommunity_backend/controller"
 	_ "FurballCommunity_backend/docs"
-
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -45,6 +44,8 @@ func SetupRouter() *gin.Engine {
 
 		pet := v1.Group("/pet")
 		pet.POST("/add", controller.AddPet)
+		pet.GET("/getPetInfoByID/:id", controller.GetPetInfoByID)
+		pet.DELETE("deletePet/:id", controller.DeletePet)
 	}
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
