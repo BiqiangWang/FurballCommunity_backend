@@ -27,10 +27,10 @@ type configJsonBody struct {
 
 var store = base64Captcha.DefaultMemStore
 
-// base64Captcha create http handler
-// GenerateCaptchaHandler
+// GenerateCaptchaHandler base64Captcha create http handler
 // @Summary 获取图形验证码
 // @Description 获取一张图形验证码，同时返回captchaId
+// @Tags captcha
 // @Accept  json
 // @Produce  json
 // @Success 200 {string} string	"ok"
@@ -62,15 +62,15 @@ func GenerateCaptchaHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"code": 1, "data": b64s, "captchaId": id, "msg": "success"})
 }
 
-// base64Captcha verify http handler
+// CaptchaVerifyHandle 验证图形验证码 base64Captcha verify http handler
 /** 传入参数：{
     "CaptchaId":"mFXBu7EueGbtNqsErYdm",
     "VerifyValue":"vvsz"
 }
 **/
-// CaptchaVerifyHandle 验证图形验证码
 // @Summary 验证图形验证码
 // @Description 验证图形验证码 eg：{ "CaptchaId":"mFXBu7EueGbtNqsErYdm", "VerifyValue":"vvsz" }
+// @Tags captcha
 // @Accept  json
 // @Produce  json
 // @Param   CaptchaVerifyHandle    body    string   true      "CaptchaId+VerifyValue"

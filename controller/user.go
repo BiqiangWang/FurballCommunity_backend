@@ -25,6 +25,7 @@ const (
 // Register 注册
 // @Summary 用户注册
 // @Description 注册一个新的用户 eg：{ "account":"wbq", "password":"123" }
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param   user    body    string   true      "account+password"
@@ -53,6 +54,7 @@ func Register(c *gin.Context) {
 // Login 账号密码登录
 // @Summary 用户登录
 // @Description 通过id和pw登录 eg：{ "account":"wbq", "password":"123" }
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param   user    body    string     true      "account+password"
@@ -99,14 +101,15 @@ type phoneParam struct {
 	Code  string `json:"code"`
 }
 
-// Login 手机验证码登录
+// LoginWithPhone 手机验证码登录
 // @Summary 用户登录
 // @Description 通过id和pw登录 eg：{ "phone":"13533337492", "code":"123456" }
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param   user    body    string     true      "phone+code"
 // @Success 200 {string} string	"ok"
-// @Router /v1/user/login [post]
+// @Router /v1/user//loginWithPhone [post]
 func LoginWithPhone(c *gin.Context) {
 	// 1、从请求中读取数据
 	var param phoneParam
@@ -161,6 +164,7 @@ func LoginWithPhone(c *gin.Context) {
 // GetUserList
 // @Summary 获取用户列表
 // @Description 获取所有用户信息
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Success 200 {string} string	"ok"
@@ -180,6 +184,7 @@ func GetUserList(c *gin.Context) {
 // UpdateUserName
 // @Summary 更改用户名
 // @Description 通过id，修改用户名 eg：{"username":"wangwang" }
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param   id    path    uint     true      "id"
@@ -212,6 +217,7 @@ func UpdateUserName(c *gin.Context) {
 // UpdatePassword
 // @Summary 更改密码
 // @Description 通过id，修改密码 eg：{"password":"123" }
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param   id    path    uint     true      "id"
@@ -243,6 +249,7 @@ func UpdatePassword(c *gin.Context) {
 // DeleteUser
 // @Summary 删除用户
 // @Description 通过id，删除用户 eg：{ "id":"7"}
+// @Tags User
 // @Accept  json
 // @Param   id    path    uint     true      "id"
 // @Router /v1/user/deleteUser/{id} [delete]
