@@ -60,6 +60,7 @@ func SendMsg(c *gin.Context) {
 	client, _err := createClient()
 	if _err != nil {
 		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+		return
 	}
 	// 生成6位数字随机验证码
 	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
@@ -80,11 +81,13 @@ func SendMsg(c *gin.Context) {
 		_, _err = client.SendSmsWithOptions(sendSmsRequest, runtime)
 		if _err != nil {
 			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+			return
 		}
 		// 将手机号与验证码保存下来，5分钟有效
 		err := redis.RedisSet(phone.Phone, code, 5*time.Minute)
 		if err != nil {
 			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+			return
 		}
 		c.JSON(http.StatusCreated, gin.H{"code": 1, "msg": "success"})
 		return nil
@@ -101,7 +104,7 @@ func SendMsg(c *gin.Context) {
 		_, _err = util.AssertAsString(error.Message)
 		if _err != nil {
 			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+			return
 		}
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
 }

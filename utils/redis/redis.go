@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -19,13 +18,14 @@ type Location struct {
 var ctx = context.Background()
 
 // 创建redis客户端
+// redis命令行远程连接命令：redis-cli -h 47.113.230.181 -p 6379 -a 123456
 var rdb = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379",
-	Password: "", // Redis密码
-	DB:       0,  // 数据库编号
+	Addr:     "47.113.230.181:6379",
+	Password: "123456", // Redis密码
+	DB:       0,        // 数据库编号
 })
 
-// 设置普通类型键值对
+// 设置普通类型键值对，second为0时永久有效
 func RedisSet(key string, value interface{}, second time.Duration) error {
 	return rdb.Set(ctx, key, value, second).Err()
 }
@@ -33,6 +33,11 @@ func RedisSet(key string, value interface{}, second time.Duration) error {
 // 获取普通类型键值对
 func RedisGet(name string) (string, error) {
 	return rdb.Get(ctx, name).Result()
+}
+
+// 删除普通类型键值对
+func RedisDel(name ...string) error {
+	return rdb.Del(ctx, name...).Err()
 }
 
 // 将地理位置信息存储到Redis中
@@ -70,10 +75,6 @@ func RedisGeoRadius(key string, longitude, latitude, radius float64) ([]*Locatio
 		return nil, err
 	}
 	for _, geoLocation := range geoLocations {
-		log.Println("geoLocation.Name:", geoLocation.Name)
-		log.Println("geoLocation.Longitude:", geoLocation.Longitude)
-		log.Println("geoLocation.Latitude:", geoLocation.Latitude)
-		log.Println("geoLocation.Distance:", geoLocation.Dist)
 		locations = append(locations, &Location{
 			Name:      geoLocation.Name,
 			Longitude: geoLocation.Longitude,
@@ -82,6 +83,18 @@ func RedisGeoRadius(key string, longitude, latitude, radius float64) ([]*Locatio
 		})
 	}
 	return locations, nil
+}
+
+// 保存多个key-value键值对
+// redis.RedisHMset("user1", "name", "wang", "age", 21, "sex", 0, "city", "Beijing")
+func RedisHMset(key string, values ...interface{}) error {
+	return rdb.HMSet(ctx, key, values).Err()
+}
+
+// 获取指定key中指定field的值
+// value, err := redis.RedisHGet("user1", "name")
+func RedisHGet(key string, field string) (string, error) {
+	return rdb.HGet(ctx, key, field).Result()
 }
 
 // 关闭连接
