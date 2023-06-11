@@ -16,6 +16,63 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/api/getCaptcha": {
+            "get": {
+                "description": "获取一张图形验证码，同时返回captchaId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "captcha"
+                ],
+                "summary": "获取图形验证码",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/api/verifyCaptcha": {
+            "post": {
+                "description": "验证图形验证码 eg：{ \"CaptchaId\":\"mFXBu7EueGbtNqsErYdm\", \"VerifyValue\":\"vvsz\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "captcha"
+                ],
+                "summary": "验证图形验证码",
+                "parameters": [
+                    {
+                        "description": "CaptchaId+VerifyValue",
+                        "name": "CaptchaVerifyHandle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/pet/add": {
             "post": {
                 "description": "添加一个新的宠物 eg：{ \"pet_name\":\"xiaohuang\", \"user_id\":2 }",
@@ -24,6 +81,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Pet"
                 ],
                 "summary": "添加宠物",
                 "parameters": [
@@ -47,11 +107,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/pet/deletePet/{id}": {
+            "delete": {
+                "description": "通过id，删除宠物 eg：{ \"id\":\"5\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "删除宠物",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/pet/getPetInfoByID/{id}": {
+            "get": {
+                "description": "通过宠物id查询宠物信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "通过宠物id查询宠物信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pet_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user//loginWithPhone": {
+            "post": {
+                "description": "通过id和pw登录 eg：{ \"phone\":\"13533337492\", \"code\":\"123456\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "phone+code",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/deleteUser/{id}": {
             "delete": {
                 "description": "通过id，删除用户 eg：{ \"id\":\"7\"}",
                 "consumes": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "删除用户",
                 "parameters": [
@@ -75,6 +226,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "User"
+                ],
                 "summary": "获取用户列表",
                 "responses": {
                     "200": {
@@ -94,6 +248,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "用户登录",
                 "parameters": [
@@ -126,6 +283,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "User"
+                ],
                 "summary": "用户注册",
                 "parameters": [
                     {
@@ -157,6 +317,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "User"
+                ],
                 "summary": "更改密码",
                 "parameters": [
                     {
@@ -187,6 +350,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "更改用户名",
                 "parameters": [

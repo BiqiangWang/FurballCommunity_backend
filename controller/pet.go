@@ -6,11 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 )
 
 // AddPet
 // @Summary 添加宠物
 // @Description 添加一个新的宠物 eg：{ "pet_name":"xiaohuang", "user_id":2 }
+// @Tags Pet
 // @Accept  json
 // @Produce  json
 // @Param   pet    body    string   true      "petname + userid"
@@ -30,5 +32,52 @@ func AddPet(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusOK, gin.H{"status": reStatusSuccess, "text": "添加成功", "petid": pet.PetID})
 		}
+	}
+}
+
+// GetPetInfoByID
+// @Summary 通过宠物id查询宠物信息
+// @Description 通过宠物id查询宠物信息
+// @Tags Pet
+// @Accept  json
+// @Produce  json
+// @Param   id    path    uint     true      "pet_id"
+// @Success 200 {string} string	"ok"
+// @Router /v1/pet/getPetInfoByID/{id} [GET]
+func GetPetInfoByID(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "无效的id！"})
+		return
+	}
+	petId, err := strconv.ParseInt(id, 10, 64)
+	pet, err := models.GetPetInfoByID(uint(petId))
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		return
+	}
+	c.BindJSON(&pet)
+	c.JSON(http.StatusOK, gin.H{"pet_info": pet})
+}
+
+// DeletePet
+// @Summary 删除宠物
+// @Description 通过id，删除宠物 eg：{ "id":"5"}
+// @Tags Pet
+// @Accept  json
+// @Param   id    path    uint     true      "id"
+// @Router /v1/pet/deletePet/{id} [delete]
+func DeletePet(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "无效的id"})
+		return
+	}
+	if err := models.DeletePet(id); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "删除成功",
+		})
 	}
 }

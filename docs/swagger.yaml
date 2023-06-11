@@ -2,6 +2,44 @@ info:
   contact: {}
   title: 毛球社区
 paths:
+  /v1/api/getCaptcha:
+    get:
+      consumes:
+      - application/json
+      description: 获取一张图形验证码，同时返回captchaId
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 获取图形验证码
+      tags:
+      - captcha
+  /v1/api/verifyCaptcha:
+    post:
+      consumes:
+      - application/json
+      description: 验证图形验证码 eg：{ "CaptchaId":"mFXBu7EueGbtNqsErYdm", "VerifyValue":"vvsz"
+        }
+      parameters:
+      - description: CaptchaId+VerifyValue
+        in: body
+        name: CaptchaVerifyHandle
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 验证图形验证码
+      tags:
+      - captcha
   /v1/pet/add:
     post:
       consumes:
@@ -22,6 +60,66 @@ paths:
           schema:
             type: string
       summary: 添加宠物
+      tags:
+      - Pet
+  /v1/pet/deletePet/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 通过id，删除宠物 eg：{ "id":"5"}
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses: {}
+      summary: 删除宠物
+      tags:
+      - Pet
+  /v1/pet/getPetInfoByID/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 通过宠物id查询宠物信息
+      parameters:
+      - description: pet_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 通过宠物id查询宠物信息
+      tags:
+      - Pet
+  /v1/user//loginWithPhone:
+    post:
+      consumes:
+      - application/json
+      description: 通过id和pw登录 eg：{ "phone":"13533337492", "code":"123456" }
+      parameters:
+      - description: phone+code
+        in: body
+        name: user
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 用户登录
+      tags:
+      - User
   /v1/user/deleteUser/{id}:
     delete:
       consumes:
@@ -35,6 +133,8 @@ paths:
         type: integer
       responses: {}
       summary: 删除用户
+      tags:
+      - User
   /v1/user/getUserList:
     get:
       consumes:
@@ -48,6 +148,8 @@ paths:
           schema:
             type: string
       summary: 获取用户列表
+      tags:
+      - User
   /v1/user/login:
     post:
       consumes:
@@ -68,6 +170,8 @@ paths:
           schema:
             type: string
       summary: 用户登录
+      tags:
+      - User
   /v1/user/register:
     post:
       consumes:
@@ -88,6 +192,8 @@ paths:
           schema:
             type: string
       summary: 用户注册
+      tags:
+      - User
   /v1/user/updatePassword/{id}:
     put:
       consumes:
@@ -109,6 +215,8 @@ paths:
       - application/json
       responses: {}
       summary: 更改密码
+      tags:
+      - User
   /v1/user/updateUsername/{id}:
     put:
       consumes:
@@ -134,4 +242,6 @@ paths:
           schema:
             type: string
       summary: 更改用户名
+      tags:
+      - User
 swagger: "2.0"
