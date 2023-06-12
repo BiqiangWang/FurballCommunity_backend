@@ -161,6 +161,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/pet/getPetList/{id}": {
+            "get": {
+                "description": "根据用户id获取宠物列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "获取宠物列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/pet/updatePetInfo/{id}": {
+            "put": {
+                "description": "通过id，更新宠物信息，包括宠物名称、年龄、重量、绝育信息、品种和健康情况等 eg：{\"pet_name\":\"wangwang\", \"gender\":1, \"age\":2, \"weight\":33, \"sterilization\":1, \"breed\":\"taidi\", \"health\":\"yes\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pet"
+                ],
+                "summary": "更改宠物信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new_pet_info",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user//loginWithPhone": {
             "post": {
                 "description": "通过id和pw登录 eg：{ \"phone\":\"13533337492\", \"code\":\"123456\" }",

@@ -45,6 +45,8 @@ func SetupRouter() *gin.Engine {
 		pet := v1.Group("/pet")
 		pet.POST("/add", controller.AddPet)
 		pet.GET("/getPetInfoByID/:id", controller.GetPetInfoByID)
+		pet.GET("/getPetList/:id", controller.GetPetList)
+		pet.PUT("/updatePetInfo/:id", controller.UpdatePetInfo)
 		pet.DELETE("deletePet/:id", controller.DeletePet)
 	}
 
