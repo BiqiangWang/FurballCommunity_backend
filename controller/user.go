@@ -17,9 +17,8 @@ import (
 
 // 定义返回状态码
 const (
-	reStatusError      = 0 //返回常量为0，发生错误
-	reStatusSuccess    = 1 //返回常量为1，成功
-	reStatusNameRepeat = 2 //返回常量为2，注册用户名重复
+	reStatusError   = 0 //返回常量为0，发生错误
+	reStatusSuccess = 1 //返回常量为1，成功
 )
 
 // Register 注册
@@ -40,13 +39,23 @@ func Register(c *gin.Context) {
 	_, err := models.GetUserByAccount(user.Account)
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		//注册用户名已存在，输出状态2
-		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "此用户已存在！"})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "此用户账号已存在！"})
 	} else {
 		// 3、存入数据库
 		if err := models.CreateUser(&user); err != nil {
 			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
+			// 生成token
+			token, err := token.CreateToken(token.UserInfo{
+				ID:       user.UserID,
+				Username: user.Username,
+				Account:  user.Account,
+			})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
 		}
 	}
 }
@@ -81,11 +90,10 @@ func Login(c *gin.Context) {
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{
-				"user_id":  query_user.UserID,
-				"username": query_user.Username,
-				"code":     reStatusSuccess,
-				"token":    token,
-				"msg":      "登陆成功！",
+				"user":  query_user,
+				"code":  reStatusSuccess,
+				"token": token,
+				"msg":   "登陆成功！",
 			})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "密码错误！"})
@@ -156,7 +164,17 @@ func LoginWithPhone(c *gin.Context) {
 			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
 			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "msg": "注册成功！", "user": user})
+			// 生成token
+			token, err := token.CreateToken(token.UserInfo{
+				ID:       query_user.UserID,
+				Username: query_user.Username,
+				Account:  query_user.Account,
+			})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
 		}
 	}
 }
