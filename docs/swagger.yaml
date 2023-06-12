@@ -98,6 +98,52 @@ paths:
       summary: 通过宠物id查询宠物信息
       tags:
       - Pet
+  /v1/pet/getPetList/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户id获取宠物列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取宠物列表
+      tags:
+      - Pet
+  /v1/pet/updatePetInfo/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 通过id，更新宠物信息，包括宠物名称、年龄、重量、绝育信息、品种和健康情况等 eg：{"pet_name":"wangwang",
+        "gender":1, "age":2, "weight":33, "sterilization":1, "breed":"taidi", "health":"yes"
+        }
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new_pet_info
+        in: body
+        name: user
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 更改宠物信息
+      tags:
+      - Pet
   /v1/user//loginWithPhone:
     post:
       consumes:

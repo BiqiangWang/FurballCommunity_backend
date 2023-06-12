@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	DB *gorm.DB
+	DB    *gorm.DB
+	DbErr error
 )
 
 func InitMySQL() {
@@ -27,7 +28,7 @@ func InitMySQL() {
 	)
 	// ----------------------- 连接数据库 -----------------------
 	dsn := "root:Wbq123456!@tcp(47.113.230.181:3306)/fc?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.New(mysql.Config{
+	DB, DbErr = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       dsn,
 		DefaultStringSize:         256,
 		DisableDatetimePrecision:  true,
@@ -37,11 +38,14 @@ func InitMySQL() {
 	}), &gorm.Config{
 		Logger: newLogger,
 	})
-	DB = db
-	if err != nil {
-		fmt.Printf("mysql connect error %v", err)
-		panic(err)
+	if DbErr != nil {
+		log.Fatalf("mysql connect error %v", DbErr)
 	}
+	//DB = db
+	//if err != nil {
+	//	fmt.Printf("mysql connect error %v", err)
+	//	panic(err)
+	//}
 	if DB.Error != nil {
 		fmt.Printf("database error %v", DB.Error)
 	}

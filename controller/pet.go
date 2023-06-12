@@ -2,9 +2,7 @@ package controller
 
 import (
 	"FurballCommunity_backend/models"
-	"errors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
@@ -22,16 +20,10 @@ func AddPet(c *gin.Context) {
 	var pet models.Pet
 	c.BindJSON(&pet)
 
-	_, err := models.GetPetInfoByName(pet.PetName)
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		// 宠物名已存在
-		c.JSON(http.StatusOK, gin.H{"status": reStatusError, "text": "该宠物已被添加"})
+	if err := models.AddPet(&pet); err != nil {
+		c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
-		if err := models.AddPet(&pet); err != nil {
-			c.JSON(http.StatusCreated, gin.H{"status": reStatusError, "text": err.Error()})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"status": reStatusSuccess, "text": "添加成功", "petid": pet.PetID})
-		}
+		c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "msg": "添加成功", "pet_id": pet.PetID})
 	}
 }
 
@@ -43,21 +35,24 @@ func AddPet(c *gin.Context) {
 // @Produce  json
 // @Param   id    path    uint     true      "pet_id"
 // @Success 200 {string} string	"ok"
-// @Router /v1/pet/getPetInfoByID/{id} [GET]
+// @Router /v1/pet/getPetInfoByID/{id} [get]
 func GetPetInfoByID(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{"error": "无效的id！"})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id！"})
 		return
 	}
 	petId, err := strconv.ParseInt(id, 10, 64)
-	pet, err := models.GetPetInfoByID(uint(petId))
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
 		return
 	}
-	c.BindJSON(&pet)
-	c.JSON(http.StatusOK, gin.H{"pet_info": pet})
+	pet, e := models.GetPetInfoByID(uint(petId))
+	if e != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "查询成功", "pet_info": pet})
 }
 
 // DeletePet
@@ -70,14 +65,88 @@ func GetPetInfoByID(c *gin.Context) {
 func DeletePet(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
-		c.JSON(http.StatusOK, gin.H{"error": "无效的id"})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
 		return
 	}
 	if err := models.DeletePet(id); err != nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "删除成功",
+			"code": reStatusSuccess,
+			"msg":  "删除成功",
+		})
+	}
+}
+
+// GetPetList
+// @Summary 获取宠物列表
+// @Description 根据用户id获取宠物列表
+// @Tags Pet
+// @Accept  json
+// @Produce  json
+// @Param   id    path    uint     true      "id"
+// @Router /v1/pet/getPetList/{id} [get]
+func GetPetList(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	petList, err := models.GetPetList(uint(userId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "msg": "成功获取宠物列表", "pet_list": petList})
+
+}
+
+// UpdatePetInfo
+// @Summary 更改宠物信息
+// @Description 通过id，更新宠物信息，包括宠物名称、年龄、重量、绝育信息、品种和健康情况等 eg：{"pet_name":"wangwang", "gender":1, "age":2, "weight":33, "sterilization":1, "breed":"taidi", "health":"yes" }
+// @Tags Pet
+// @Accept  json
+// @Produce  json
+// @Param   id    path    uint     true      "id"
+// @Param   user    body    string     true      "new_pet_info"
+// @Success 200 {string} string	"ok"
+// @Router /v1/pet/updatePetInfo/{id} [put]
+func UpdatePetInfo(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	petId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+
+	pet, err := models.GetPetInfoByID(uint(petId))
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
+
+	e := c.BindJSON(&pet)
+	if e != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": e.Error()})
+		return
+	}
+
+	if err := models.UpdatePetInfo(pet); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": reStatusSuccess,
+			"meg":  "成功修改宠物信息！",
+			"info": pet,
 		})
 	}
 }
