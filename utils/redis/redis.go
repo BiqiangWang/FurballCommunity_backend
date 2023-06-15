@@ -35,6 +35,11 @@ func RedisGet(name string) (string, error) {
 	return rdb.Get(ctx, name).Result()
 }
 
+// 查看key是否存在,如果返回的结果为1，则表示key存在于Redis中，为0则表示不存在。
+func RedisExists(key string) (int64, error) {
+	return rdb.Exists(ctx, key).Result()
+}
+
 // 删除普通类型键值对
 func RedisDel(name ...string) error {
 	return rdb.Del(ctx, name...).Err()

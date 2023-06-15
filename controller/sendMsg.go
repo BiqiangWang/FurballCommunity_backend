@@ -59,7 +59,7 @@ func SendMsg(c *gin.Context) {
 	// 此处采用的Credential配置凭证，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378661.html
 	client, _err := createClient()
 	if _err != nil {
-		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": _err.Error()})
 		return
 	}
 	// 生成6位数字随机验证码
@@ -80,16 +80,16 @@ func SendMsg(c *gin.Context) {
 		// 复制代码运行请自行打印 API 的返回值
 		_, _err = client.SendSmsWithOptions(sendSmsRequest, runtime)
 		if _err != nil {
-			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+			c.JSON(http.StatusOK, gin.H{"code": 0, "msg": _err.Error()})
 			return
 		}
 		// 将手机号与验证码保存下来，5分钟有效
 		err := redis.RedisSet(phone.Phone, code, 5*time.Minute)
 		if err != nil {
-			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+			c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"code": 1, "msg": "success"})
+		c.JSON(http.StatusOK, gin.H{"code": 1, "msg": "success"})
 		return nil
 	}()
 
@@ -103,7 +103,7 @@ func SendMsg(c *gin.Context) {
 		// 如有需要，请打印 error
 		_, _err = util.AssertAsString(error.Message)
 		if _err != nil {
-			c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": _err.Error()})
+			c.JSON(http.StatusOK, gin.H{"code": 0, "msg": _err.Error()})
 			return
 		}
 	}

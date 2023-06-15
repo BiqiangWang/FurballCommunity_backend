@@ -3,6 +3,8 @@ package routers
 import (
 	"FurballCommunity_backend/controller"
 	_ "FurballCommunity_backend/docs"
+	"FurballCommunity_backend/middleware"
+
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -26,10 +28,10 @@ func SetupRouter() *gin.Engine {
 	v1 := router.Group("/v1")
 	{
 		api := v1.Group("/api")
-		api.POST("/multiUpload", controller.MultiUpload)                     //多文件上传
 		api.GET("/getCaptcha", controller.GenerateCaptchaHandler)            //获取图形验证码
 		api.POST("/verifyCaptcha", controller.CaptchaVerifyHandle)           //验证图形验证码
 		api.POST("/sendMsg", controller.SendMsg)                             //发送手机验证码
+		api.POST("/multiUpload", controller.MultiUpload)                     //多文件上传
 		api.POST("/setUserLocation", controller.SetUserLocation)             //保存用户位置信息
 		api.POST("/getUserLocationRadius", controller.GetUserLocationRadius) //获取用户50km半径内照护员位置信息
 
@@ -37,10 +39,14 @@ func SetupRouter() *gin.Engine {
 		user.POST("/login", controller.Login)                   //账号密码登录
 		user.POST("/loginWithPhone", controller.LoginWithPhone) //手机号登录（自动注册）
 		user.POST("/register", controller.Register)
-		user.PUT("/updateUsername/:id", controller.UpdateUserName)
-		user.PUT("/updatePassword/:id", controller.UpdatePassword)
-		user.DELETE("/deleteUser/:id", controller.DeleteUser)
-		user.GET("/getUserList", controller.GetUserList)
+		// 【需要token】中间件验证的路由
+		user.Use(middleware.CheckTokenAuth())
+		{
+			user.PUT("/updateUsername/:id", controller.UpdateUserName)
+			user.PUT("/updatePassword/:id", controller.UpdatePassword)
+			user.DELETE("/deleteUser/:id", controller.DeleteUser)
+			user.GET("/getUserList", controller.GetUserList)
+		}
 
 		pet := v1.Group("/pet")
 		pet.POST("/add", controller.AddPet)
