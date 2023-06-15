@@ -6,8 +6,9 @@ import (
 
 type User struct {
 	UserID    uint   `gorm:"primary_key" json:"user_id"`
-	Account   string `json:"account"  binding:"required"`
-	Password  string `json:"password"  binding:"required"`
+	Account   string `json:"account"  gorm:"not null"`
+	Password  string `json:"password"  gorm:"not null"`
+	Pets      []Pet  `gorm:"foreign_key:UserID"`
 	Phone     string `json:"phone"`
 	Username  string `json:"username"  default:"请输入用户名"`
 	Authority uint   `json:"authority"`

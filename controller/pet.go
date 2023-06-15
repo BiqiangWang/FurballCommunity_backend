@@ -9,7 +9,7 @@ import (
 
 // AddPet
 // @Summary 添加宠物
-// @Description 添加一个新的宠物 eg：{ "pet_name":"xiaohuang", "user_id":2 }
+// @Description 添加一个新的宠物 eg：{"pet_name":"xiaohuang","user_id":2 }
 // @Tags Pet
 // @Accept  json
 // @Produce  json
@@ -18,10 +18,14 @@ import (
 // @Router /v1/pet/add [post]
 func AddPet(c *gin.Context) {
 	var pet models.Pet
-	c.BindJSON(&pet)
+	err := c.BindJSON(&pet)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
 
 	if err := models.AddPet(&pet); err != nil {
-		c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "msg": "添加成功", "pet_id": pet.PetID})
 	}
@@ -68,6 +72,36 @@ func DeletePet(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
 		return
 	}
+	petID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	//// 先查询该宠物是否有对应的订单
+	//orders, err := models.GetOrderOfPet(uint(petID))
+	//if err != nil {
+	//	// 处理查询错误
+	//	c.JSON(http.StatusInternalServerError, gin.H{
+	//		"error": "Failed to get order of pet",
+	//	})
+	//	return
+	//}
+
+	if err := models.DeleteOrderOfPet(uint(petID)); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	}
+	//// 如果查询到该宠物有对应的订单，则需要删除订单
+	//if order != nil {
+	//	err = models.DeleteOrder(order.OrderID)
+	//	if err != nil {
+	//		// 处理删除订单错误
+	//		c.JSON(http.StatusInternalServerError, gin.H{
+	//			"error": "Failed to delete order",
+	//		})
+	//		return
+	//	}
+	//}
+
 	if err := models.DeletePet(id); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
