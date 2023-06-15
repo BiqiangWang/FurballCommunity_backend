@@ -73,9 +73,134 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/order/create": {
+            "post": {
+                "description": "根据用户id，创建一个新的订单 eg：{ \"pet_id\":3, \"announcer_id\":2 }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "创建订单",
+                "parameters": [
+                    {
+                        "description": "petname + userid",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/order/getOrderList/{user_id}": {
+            "get": {
+                "description": "根据用户id获取订单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "获取用户的订单列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/order/getOrderOfPet/{pet_id}": {
+            "get": {
+                "description": "根据宠物id获取订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "获取宠物的订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pet_id",
+                        "name": "pet_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/order/updateOrderInfo/{order_id}": {
+            "put": {
+                "description": "通过订单id，更新接收者、开始结束时间、地点、健康、订单状态、备注、价格、评价、评分等 eg：{\"receiver_id\":1}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "更改订单信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order_id",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new_order_info",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/pet/add": {
             "post": {
-                "description": "添加一个新的宠物 eg：{ \"pet_name\":\"xiaohuang\", \"user_id\":2 }",
+                "description": "添加一个新的宠物 eg：{\"pet_name\":\"xiaohuang\",\"user_id\":2 }",
                 "consumes": [
                     "application/json"
                 ],

@@ -17,6 +17,9 @@ func main() {
 	// 绑定表
 	database.DB.AutoMigrate(&models.User{})
 	database.DB.AutoMigrate(&models.Pet{})
+	database.DB.AutoMigrate(&models.Order{})
+
+	//database.DB.Model(&models.Pet{}).Association("Orders")
 
 	// 启动路由服务
 	routers.SetupRouter()

@@ -40,11 +40,94 @@ paths:
       summary: 验证图形验证码
       tags:
       - captcha
+  /v1/order/create:
+    post:
+      consumes:
+      - application/json
+      description: 根据用户id，创建一个新的订单 eg：{ "pet_id":3, "announcer_id":2 }
+      parameters:
+      - description: petname + userid
+        in: body
+        name: order
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 创建订单
+      tags:
+      - Order
+  /v1/order/getOrderList/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户id获取订单列表
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取用户的订单列表
+      tags:
+      - Order
+  /v1/order/getOrderOfPet/{pet_id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据宠物id获取订单
+      parameters:
+      - description: pet_id
+        in: path
+        name: pet_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取宠物的订单
+      tags:
+      - Order
+  /v1/order/updateOrderInfo/{order_id}:
+    put:
+      consumes:
+      - application/json
+      description: 通过订单id，更新接收者、开始结束时间、地点、健康、订单状态、备注、价格、评价、评分等 eg：{"receiver_id":1}
+      parameters:
+      - description: order_id
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      - description: new_order_info
+        in: body
+        name: user
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 更改订单信息
+      tags:
+      - Order
   /v1/pet/add:
     post:
       consumes:
       - application/json
-      description: 添加一个新的宠物 eg：{ "pet_name":"xiaohuang", "user_id":2 }
+      description: 添加一个新的宠物 eg：{"pet_name":"xiaohuang","user_id":2 }
       parameters:
       - description: petname + userid
         in: body
