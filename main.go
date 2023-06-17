@@ -4,6 +4,7 @@ import (
 	"FurballCommunity_backend/config/database"
 	"FurballCommunity_backend/models"
 	"FurballCommunity_backend/routers"
+	"log"
 )
 
 // @title 毛球社区
@@ -18,6 +19,11 @@ func main() {
 	database.DB.AutoMigrate(&models.User{})
 	database.DB.AutoMigrate(&models.Pet{})
 	database.DB.AutoMigrate(&models.Order{})
+	err := database.DB.AutoMigrate(&models.OrderCmt{})
+	if err != nil {
+		log.Println("err:", err)
+		return
+	}
 
 	//database.DB.Model(&models.Pet{}).Association("Orders")
 

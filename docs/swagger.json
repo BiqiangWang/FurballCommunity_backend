@@ -187,6 +187,87 @@
                 }
             }
         },
+        "/v1/orderCmt/create": {
+            "post": {
+                "description": "根据用户id、订单id，添加一个新的订单评论 eg：{ \"user_id\":1, \"order_id\":2, \"content\":\"宠物照顾的针布戳呢\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderCmt"
+                ],
+                "summary": "创建订单评论",
+                "parameters": [
+                    {
+                        "description": "userid + orderId + content",
+                        "name": "orderCmt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/orderCmt/deleteOrderCmt/{order_cmt_id}": {
+            "delete": {
+                "description": "通过orderCmtID，删除宠物 eg：{ \"orderCmtID\":\"5\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderCmt"
+                ],
+                "summary": "删除订单评论",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order_cmt_id",
+                        "name": "order_cmt_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/orderCmt/getOrderCmtList/{order_id}": {
+            "get": {
+                "description": "根据订单id获取评论列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderCmt"
+                ],
+                "summary": "获取订单的评论列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order_id",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/v1/pet/add": {
             "post": {
                 "description": "添加一个新的宠物 eg：{\"pet_name\":\"xiaohuang\",\"user_id\":2 }",

@@ -60,6 +60,11 @@ func SetupRouter() *gin.Engine {
 		order.GET("/getOrderList/:user_id", controller.GetOrderList)
 		order.GET("getOrderOfPet/:pet_id", controller.GetOrderOfPet)
 		order.PUT("/updateOrderInfo/:order_id", controller.UpdateOrderInfo)
+
+		orderCmt := v1.Group("/orderCmt")
+		orderCmt.POST("/create", controller.CreateOrderComment)
+		orderCmt.GET("/getOrderCmtList/:order_id", controller.GetCommentListOfOrder)
+		orderCmt.DELETE("/deleteOrderCmt/:order_cmt_id", controller.DeleteOrderCmt)
 	}
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")

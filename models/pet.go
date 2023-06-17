@@ -10,6 +10,7 @@ type Pet struct {
 	PetID         uint    `gorm:"primary_key" json:"pet_id"`
 	UserID        uint    `json:"user_id" gorm:"not null"`
 	PetName       string  `json:"pet_name"`
+	User          User    `gorm:"foreign_key:UserID"`
 	Orders        []Order `gorm:"foreign_key:PetID"`
 	Gender        int     `json:"gender"`
 	Age           int     `json:"age"`
@@ -18,6 +19,16 @@ type Pet struct {
 	Breed         string  `json:"breed"`
 	Health        string  `json:"health"`
 	// photo entry have not been added in this table
+}
+
+// BelongsTo 在Pet模型中定义BelongsTo方法，表示Pet属于一个User
+func (pet *Pet) BelongsTo() interface{} {
+	return &User{}
+}
+
+// HasMany 在User模型中定义HasMany方法，表示一个Pet拥有多个Order
+func (pet *Pet) HasMany() interface{} {
+	return &[]Order{}
 }
 
 // AddPet means add a pet to pet table
@@ -56,9 +67,9 @@ func UpdatePetInfo(pet *Pet) (err error) {
 // 通过宠物id获取宠物信息
 func GetPetInfoByID(petID uint) (pet *Pet, err error) {
 	pet = new(Pet)
-	if err = database.DB.Where("pet_id = ?", petID).Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err = database.DB.Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("user_id", "account", "username")
-	}).First(pet).Error; err != nil {
+	}).Preload("Orders").Where("pet_id = ?", petID).First(pet).Error; err != nil {
 		return nil, err
 	}
 	return
@@ -94,15 +105,3 @@ func DeleteOrderOfPet(petID uint) (err error) {
 
 	return nil
 }
-
-// GetPetInfoByName
-// 通过宠物名称获取宠物信息
-//func GetPetInfoByName(petName string) (pet *Pet, err error) {
-//	pet = new(Pet)
-//	if err = database.DB.Where("pet_name = ?", petName).Preload("User", func(db *gorm.DB) *gorm.DB {
-//		return db.Select("user_id", "username", "account")
-//	}).First(pet).Error; err != nil {
-//		return nil, err
-//	}
-//	return
-//}

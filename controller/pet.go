@@ -53,7 +53,7 @@ func GetPetInfoByID(c *gin.Context) {
 	}
 	pet, e := models.GetPetInfoByID(uint(petId))
 	if e != nil {
-		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": e.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "查询成功", "pet_info": pet})
@@ -77,30 +77,10 @@ func DeletePet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
 		return
 	}
-	//// 先查询该宠物是否有对应的订单
-	//orders, err := models.GetOrderOfPet(uint(petID))
-	//if err != nil {
-	//	// 处理查询错误
-	//	c.JSON(http.StatusInternalServerError, gin.H{
-	//		"error": "Failed to get order of pet",
-	//	})
-	//	return
-	//}
 
 	if err := models.DeleteOrderOfPet(uint(petID)); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	}
-	//// 如果查询到该宠物有对应的订单，则需要删除订单
-	//if order != nil {
-	//	err = models.DeleteOrder(order.OrderID)
-	//	if err != nil {
-	//		// 处理删除订单错误
-	//		c.JSON(http.StatusInternalServerError, gin.H{
-	//			"error": "Failed to delete order",
-	//		})
-	//		return
-	//	}
-	//}
 
 	if err := models.DeletePet(id); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
