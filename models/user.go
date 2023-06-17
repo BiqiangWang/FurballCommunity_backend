@@ -14,7 +14,12 @@ type User struct {
 	Authority uint   `json:"authority"`
 }
 
-// 创建用户
+// HasMany 在User模型中定义HasMany方法，表示一个User拥有多个Pet
+func (user *User) HasMany() interface{} {
+	return &[]Pet{}
+}
+
+// CreateUser 创建用户
 func CreateUser(user *User) (err error) {
 	err = database.DB.Create(&user).Error
 	return

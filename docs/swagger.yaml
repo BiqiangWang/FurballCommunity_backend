@@ -123,6 +123,61 @@ paths:
       summary: 更改订单信息
       tags:
       - Order
+  /v1/orderCmt/create:
+    post:
+      consumes:
+      - application/json
+      description: 根据用户id、订单id，添加一个新的订单评论 eg：{ "user_id":1, "order_id":2, "content":"宠物照顾的针布戳呢"
+        }
+      parameters:
+      - description: userid + orderId + content
+        in: body
+        name: orderCmt
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 创建订单评论
+      tags:
+      - OrderCmt
+  /v1/orderCmt/deleteOrderCmt/{order_cmt_id}:
+    delete:
+      consumes:
+      - application/json
+      description: 通过orderCmtID，删除宠物 eg：{ "orderCmtID":"5"}
+      parameters:
+      - description: order_cmt_id
+        in: path
+        name: order_cmt_id
+        required: true
+        type: integer
+      responses: {}
+      summary: 删除订单评论
+      tags:
+      - OrderCmt
+  /v1/orderCmt/getOrderCmtList/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据订单id获取评论列表
+      parameters:
+      - description: order_id
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取订单的评论列表
+      tags:
+      - OrderCmt
   /v1/pet/add:
     post:
       consumes:
