@@ -62,6 +62,23 @@ paths:
       summary: 创建订单
       tags:
       - Order
+  /v1/order/getOrderInfoById/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据订单id获取详情
+      parameters:
+      - description: order_id
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取订单信息
+      tags:
+      - Order
   /v1/order/getOrderList/{user_id}:
     get:
       consumes:
@@ -301,7 +318,7 @@ paths:
           description: ok
           schema:
             type: string
-      summary: 用户登录
+      summary: 手机验证码登录
       tags:
       - User
   /v1/user/deleteUser/{id}:
@@ -426,6 +443,51 @@ paths:
           schema:
             type: string
       summary: 更改用户名
+      tags:
+      - User
+  /v2/user/getUserById/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户id获取用户信息
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取用户信息
+      tags:
+      - User
+  /v2/user/updateUserInfo/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 通过id，更新用户信息，包括手机号、权限等级、性别、地址、分数、简介、身份证号、头像、养宠经验、工作时间、可养宠数量和身份证照片等，用户名和密码由原接口修改
+        eg：{"gender":1}
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new_pet_info
+        in: body
+        name: user
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 更改用户信息
       tags:
       - User
 swagger: "2.0"

@@ -2,6 +2,7 @@ package models
 
 import (
 	"FurballCommunity_backend/config/database"
+	"gorm.io/gorm"
 	"log"
 	"time"
 )
@@ -25,7 +26,7 @@ type Order struct {
 	Score        float64    `json:"score"`
 }
 
-// BelongsTo 在Pet模型中定义BelongsTo方法，表示Order属于一个pet
+// BelongsTo 在Order模型中定义BelongsTo方法，表示Order属于一个pet
 func (order *Order) BelongsTo() interface{} {
 	return &Pet{}
 }
@@ -35,13 +36,22 @@ func (order *Order) HasMany() interface{} {
 	return &[]OrderCmt{}
 }
 
+type OrderBase struct {
+	OrderID     uint `json:"order_id"`
+	PetID       uint `json:"pet_id"`
+	AnnouncerID uint `json:"announcer_id"`
+	ReceiverID  uint `json:"receiver_id"`
+}
+
 func CreateOrder(order *Order) (err error) {
 	err = database.DB.Create(&order).Error
 	return
 }
 
 func GetOrderList(userID uint) (orderList []*Order, err error) {
-	if err := database.DB.Where("announcer_id = ?", userID).Find(&orderList).Error; err != nil {
+	if err := database.DB.Preload("Pet", func(db *gorm.DB) *gorm.DB {
+		return database.DB.Model(&Pet{}).Find(&PetBase{})
+	}).Where("announcer_id = ?", userID).Find(&orderList).Error; err != nil {
 		return nil, err
 	}
 	return orderList, nil
@@ -49,14 +59,18 @@ func GetOrderList(userID uint) (orderList []*Order, err error) {
 
 func GetOrderOfPet(petID uint) (order []*Order, err error) {
 	log.Printf("GetOrderOfpet: petID=%d\n", petID)
-	if err := database.DB.Where("pet_id = ?", petID).Find(&order).Error; err != nil {
+	if err := database.DB.Preload("Pet", func(db *gorm.DB) *gorm.DB {
+		return database.DB.Model(&Pet{}).Find(&PetBase{})
+	}).Where("pet_id = ?", petID).Find(&order).Error; err != nil {
 		return nil, err
 	}
 	return order, nil
 }
 
 func GetOrderInfoByID(orderID uint) (order *Order, err error) {
-	if err := database.DB.Where("order_id = ?", orderID).First(&order).Error; err != nil {
+	if err := database.DB.Preload("Pet", func(db *gorm.DB) *gorm.DB {
+		return database.DB.Model(&Pet{}).Find(&PetBase{})
+	}).Preload("OrderCmts").Where("order_id = ?", orderID).First(&order).Error; err != nil {
 		return nil, err
 	}
 	return order, nil
@@ -77,20 +91,6 @@ func UpdateOrderInfo(order *Order) (err error) {
 	}).Error
 	return
 }
-
-//func DeleteOrderOfPet(orders []*Order, petID uint) (err error) {
-//	// 开始数据库事务
-//	tx := database.DB.Begin()
-//
-//	// 删除所有订单
-//	if err := tx.Where("pet_id = ?", petID).Delete(&orders).Error; err != nil {
-//		tx.Rollback()
-//		return err
-//	}
-//	tx.Commit()
-//
-//	return
-//}
 
 func DeleteOrder(orderID uint) (err error) {
 	err = database.DB.Delete(&Order{}, orderID).Error

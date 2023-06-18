@@ -3,10 +3,10 @@ package controller
 import (
 	"FurballCommunity_backend/config/token"
 	"FurballCommunity_backend/models"
+	"FurballCommunity_backend/utils/redis"
 	"errors"
 	"net/http"
-
-	"FurballCommunity_backend/utils/redis"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/swaggo/files"
@@ -109,8 +109,8 @@ type phoneParam struct {
 	Code  string `json:"code"`
 }
 
-// LoginWithPhone 手机验证码登录
-// @Summary 用户登录
+// LoginWithPhone
+// @Summary 手机验证码登录
 // @Description 通过id和pw登录 eg：{ "phone":"13533337492", "code":"123456" }
 // @Tags User
 // @Accept  json
@@ -215,7 +215,12 @@ func UpdateUserName(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "无效的id！"})
 		return
 	}
-	user, err := models.GetUserById(id)
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	user, err := models.GetUserById(uint(userId))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 		return
@@ -247,7 +252,12 @@ func UpdatePassword(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "无效的id！"})
 		return
 	}
-	user, err := models.GetUserById(id)
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	user, err := models.GetUserById(uint(userId))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 		return
@@ -285,6 +295,79 @@ func DeleteUser(c *gin.Context) {
 			"msg":  "删除成功",
 		})
 	}
+}
+
+// GetUserInfo
+// @Summary 获取用户信息
+// @Description 根据用户id获取用户信息
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param   id    path    uint     true      "id"
+// @Router /v2/user/getUserById/{id} [get]
+func GetUserInfo(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	if user, err := models.GetUserById(uint(userId)); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": reStatusSuccess,
+			"msg":  "成功获取用户信息",
+			"user": user,
+		})
+	}
+}
+
+// UpdateUserInfo
+// @Summary 更改用户信息
+// @Description 通过id，更新用户信息，包括手机号、权限等级、性别、地址、分数、简介、身份证号、头像、养宠经验、工作时间、可养宠数量和身份证照片等，用户名和密码由原接口修改 eg：{"gender":1}
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param   id    path    uint     true      "id"
+// @Param   user    body    string     true      "new_pet_info"
+// @Success 200 {string} string	"ok"
+// @Router /v2/user/updateUserInfo/{id} [put]
+func UpdateUserInfo(c *gin.Context) {
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	userId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	user, err := models.GetUserById(uint(userId))
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
+	e := c.BindJSON(&user)
+	if e != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": e.Error()})
+		return
+	}
+	if err := models.UpdateUserInfo(user); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": reStatusSuccess,
+			"meg":  "成功修改用户信息！",
+			"info": user,
+		})
+	}
+
 }
 
 // NotFound 设置默认路由当访问一个错误网站时返回

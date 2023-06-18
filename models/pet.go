@@ -31,6 +31,12 @@ func (pet *Pet) HasMany() interface{} {
 	return &[]Order{}
 }
 
+type PetBase struct {
+	PetID   uint   `json:"pet_id"`
+	UserID  uint   `json:"user_id"`
+	PetName string `json:"pet_name"`
+}
+
 // AddPet means add a pet to pet table
 func AddPet(pet *Pet) (err error) {
 	err = database.DB.Create(&pet).Error
@@ -67,9 +73,12 @@ func UpdatePetInfo(pet *Pet) (err error) {
 // 通过宠物id获取宠物信息
 func GetPetInfoByID(petID uint) (pet *Pet, err error) {
 	pet = new(Pet)
+	//var userBase UserBase
 	if err = database.DB.Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("user_id", "account", "username")
-	}).Preload("Orders").Where("pet_id = ?", petID).First(pet).Error; err != nil {
+		return database.DB.Model(&User{}).Find(&UserBase{})
+	}).Preload("Orders", func(db *gorm.DB) *gorm.DB {
+		return database.DB.Model(&Order{}).Find(&OrderBase{})
+	}).Where("pet_id = ?", petID).First(pet).Error; err != nil {
 		return nil, err
 	}
 	return
