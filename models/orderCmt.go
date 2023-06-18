@@ -14,7 +14,7 @@ type OrderCmt struct {
 	Content     string    `json:"content"`
 	Order       Order     `foreign_key:"OrderID"`
 	IsRoot      bool      `json:"is_root"`
-	ParentID    uint      `json:"parent_id"'`
+	ParentID    uint      `json:"parent_id"`
 	//ChildCmts   []OrderCmt `gorm:"foreignKey:OrderCmtID;constraint:OnDelete:CASCADE"`
 }
 

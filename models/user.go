@@ -5,13 +5,23 @@ import (
 )
 
 type User struct {
-	UserID    uint   `gorm:"primary_key" json:"user_id"`
-	Account   string `json:"account"  gorm:"not null"`
-	Password  string `json:"password"  gorm:"not null"`
-	Pets      []Pet  `gorm:"foreign_key:UserID"`
-	Phone     string `json:"phone"`
-	Username  string `json:"username"  default:"请输入用户名"`
-	Authority uint   `json:"authority"`
+	UserID      uint    `gorm:"primary_key" json:"user_id"`
+	Account     string  `json:"account"  gorm:"not null"`
+	Password    string  `json:"password"  gorm:"not null"`
+	Pets        []Pet   `gorm:"foreign_key:UserID"`
+	Phone       string  `json:"phone"`
+	Username    string  `json:"username"  default:"请输入用户名"`
+	Authority   uint    `json:"authority"`
+	Gender      uint    `json:"gender"`
+	Address     string  `json:"address"`
+	Score       float64 `json:"score"`
+	Intro       string  `json:"intro"`
+	IDNumber    string  `json:"id_number"`
+	Avatar      string  `json:"avatar"`
+	PetExp      string  `json:"pet_exp"`
+	WorkTime    uint    `json:"work_time"`
+	PetNum      int     `json:"pet_num"`
+	IDCardPhoto string  `json:"id_card_photo"`
 }
 
 // HasMany 在User模型中定义HasMany方法，表示一个User拥有多个Pet
@@ -25,6 +35,12 @@ func CreateUser(user *User) (err error) {
 	return
 }
 
+type UserBase struct {
+	UserID   uint   `json:"user_id"`
+	Account  string `json:"account"`
+	Username string `json:"username"`
+}
+
 // 获取用户列表
 func GetUserList() (userList []*User, err error) {
 	if err = database.DB.Select("user_id", "account", "username").Find(&userList).Error; err != nil {
@@ -34,9 +50,9 @@ func GetUserList() (userList []*User, err error) {
 }
 
 // 根据id获取单个用户
-func GetUserById(id string) (user *User, err error) {
+func GetUserById(id uint) (user *User, err error) {
 	user = new(User)
-	if err = database.DB.Where("user_id = ?", id).First(user).Error; err != nil {
+	if err = database.DB.Preload("Pets").Where("user_id = ?", id).First(user).Error; err != nil {
 		return nil, err
 	}
 	return
@@ -75,5 +91,23 @@ func UpdatePassword(user *User) (err error) {
 // 删除用户
 func DeleteUser(id string) (err error) {
 	err = database.DB.Delete(&User{}, id).Error
+	return
+}
+
+func UpdateUserInfo(user *User) (err error) {
+	err = database.DB.Model(&user).Updates(map[string]interface{}{
+		"phone":         user.Phone,
+		"authority":     user.Authority,
+		"gender":        user.Gender,
+		"address":       user.Address,
+		"score":         user.Score,
+		"intro":         user.Intro,
+		"id_number":     user.IDNumber,
+		"avatar":        user.Avatar,
+		"pet_exp":       user.PetExp,
+		"work_time":     user.WorkTime,
+		"pet_num":       user.PetNum,
+		"ID_card_photo": user.IDCardPhoto,
+	}).Error
 	return
 }

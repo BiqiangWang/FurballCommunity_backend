@@ -59,12 +59,21 @@ func SetupRouter() *gin.Engine {
 		order.POST("/create", controller.CreateOrder)
 		order.GET("/getOrderList/:user_id", controller.GetOrderList)
 		order.GET("getOrderOfPet/:pet_id", controller.GetOrderOfPet)
+		order.GET("/getOrderInfoById/:order_id", controller.GetOrderInfoById)
 		order.PUT("/updateOrderInfo/:order_id", controller.UpdateOrderInfo)
 
 		orderCmt := v1.Group("/orderCmt")
 		orderCmt.POST("/create", controller.CreateOrderComment)
 		orderCmt.GET("/getOrderCmtList/:order_id", controller.GetCommentListOfOrder)
 		orderCmt.DELETE("/deleteOrderCmt/:order_cmt_id", controller.DeleteOrderCmt)
+	}
+
+	// 第二次迭代
+	v2 := router.Group("/v2")
+	{
+		user := v2.Group("/user")
+		user.GET("/getUserById/:id", controller.GetUserInfo)
+		user.PUT("/updateUserInfo/:id", controller.UpdateUserInfo)
 	}
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")

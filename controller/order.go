@@ -125,3 +125,30 @@ func UpdateOrderInfo(c *gin.Context) {
 		})
 	}
 }
+
+// GetOrderInfoById
+// @Summary 获取订单信息
+// @Description 根据订单id获取详情
+// @Tags Order
+// @Accept  json
+// @Produce  json
+// @Param   order_id    path    uint     true      "order_id"
+// @Router /v1/order/getOrderInfoById/{order_id} [get]
+func GetOrderInfoById(c *gin.Context) {
+	id, ok := c.Params.Get("order_id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	orderId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	order, err := models.GetOrderInfoByID(uint(orderId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"code": reStatusError, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "msg": "成功获取订单信息", "order": order})
+}
