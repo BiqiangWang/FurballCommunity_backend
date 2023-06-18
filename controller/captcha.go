@@ -57,9 +57,9 @@ func GenerateCaptchaHandler(c *gin.Context) {
 	c1 := base64Captcha.NewCaptcha(param.DriverString.ConvertFonts(), store)
 	id, b64s, err := c1.Generate()
 	if err != nil {
-		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": 1, "data": b64s, "captchaId": id, "msg": "success"})
+	c.JSON(http.StatusOK, gin.H{"code": 1, "data": b64s, "captchaId": id, "msg": "success"})
 }
 
 // CaptchaVerifyHandle 验证图形验证码 base64Captcha verify http handler
@@ -85,6 +85,6 @@ func CaptchaVerifyHandle(c *gin.Context) {
 	if store.Verify(verifyReq.CaptchaId, verifyReq.VerifyValue, true) {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "msg": "ok"})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "failed"})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "图形验证码错误"})
 	}
 }

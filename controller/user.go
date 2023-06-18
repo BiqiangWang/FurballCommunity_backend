@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"FurballCommunity_backend/config/token"
 	"FurballCommunity_backend/models"
-	"FurballCommunity_backend/utils/redis"
 	"errors"
 	"net/http"
 	"strconv"
@@ -43,10 +41,10 @@ func Register(c *gin.Context) {
 	} else {
 		// 3、存入数据库
 		if err := models.CreateUser(&user); err != nil {
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
+			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
 			// 生成token
-			token, err := token.CreateToken(token.UserInfo{
+			genToken, err := token.CreateToken(token.UserInfo{
 				ID:       user.UserID,
 				Username: user.Username,
 				Account:  user.Account,
@@ -55,7 +53,13 @@ func Register(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
 				return
 			}
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
+			// 将token存到redis
+			err = token.SetTokenCache(user.UserID, genToken)
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "token": genToken, "msg": "注册成功！", "user": user})
 		}
 	}
 }
@@ -80,7 +84,7 @@ func Login(c *gin.Context) {
 		//3、存在再判断密码是否正确
 		if query_user.Password == user.Password {
 			// 生成token
-			token, err := token.CreateToken(token.UserInfo{
+			genToken, err := token.CreateToken(token.UserInfo{
 				ID:       query_user.UserID,
 				Username: query_user.Username,
 				Account:  query_user.Account,
@@ -89,10 +93,16 @@ func Login(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
 				return
 			}
+			// 将token存到redis
+			err = token.SetTokenCache(query_user.UserID, genToken)
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
 			c.JSON(http.StatusOK, gin.H{
 				"user":  query_user,
 				"code":  reStatusSuccess,
-				"token": token,
+				"token": genToken,
 				"msg":   "登陆成功！",
 			})
 		} else {
@@ -117,7 +127,7 @@ type phoneParam struct {
 // @Produce  json
 // @Param   user    body    string     true      "phone+code"
 // @Success 200 {string} string	"ok"
-// @Router /v1/user//loginWithPhone [post]
+// @Router /v1/user/loginWithPhone [post]
 func LoginWithPhone(c *gin.Context) {
 	// 1、从请求中读取数据
 	var param phoneParam
@@ -135,7 +145,7 @@ func LoginWithPhone(c *gin.Context) {
 		}
 		if param.Code == redis_code {
 			// 生成token
-			token, err := token.CreateToken(token.UserInfo{
+			genToken, err := token.CreateToken(token.UserInfo{
 				ID:       query_user.UserID,
 				Username: query_user.Username,
 				Account:  query_user.Account,
@@ -145,10 +155,16 @@ func LoginWithPhone(c *gin.Context) {
 				return
 			}
 			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
+			// 将token存到redis
+			err = token.SetTokenCache(query_user.UserID, genToken)
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
 			c.JSON(http.StatusOK, gin.H{
 				"user":  query_user,
 				"code":  reStatusSuccess,
-				"token": token,
+				"token": genToken,
 				"msg":   "登陆成功！",
 			})
 		} else {
@@ -161,11 +177,11 @@ func LoginWithPhone(c *gin.Context) {
 		user.Password = user.Phone
 		user.Username = user.Phone
 		if err := models.CreateUser(&user); err != nil {
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusError, "msg": err.Error()})
+			c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 		} else {
 			redis.RedisSet(user.Phone, "", 0) //将手机号对应的短信验证码的redis缓存设为""
 			// 生成token
-			token, err := token.CreateToken(token.UserInfo{
+			genToken, err := token.CreateToken(token.UserInfo{
 				ID:       query_user.UserID,
 				Username: query_user.Username,
 				Account:  query_user.Account,
@@ -174,7 +190,13 @@ func LoginWithPhone(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
 				return
 			}
-			c.JSON(http.StatusCreated, gin.H{"code": reStatusSuccess, "token": token, "msg": "注册成功！", "user": user})
+			// 将token存到redis
+			err = token.SetTokenCache(query_user.UserID, genToken)
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "token": genToken, "msg": "注册成功！", "user": user})
 		}
 	}
 }
@@ -226,13 +248,12 @@ func UpdateUserName(c *gin.Context) {
 		return
 	}
 	c.BindJSON(&user)
-
 	if err := models.UpdateUserName(user); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 1,
-			"meg":  "用户名修改成功！",
+			"msg":  "用户名修改成功！",
 		})
 	}
 }

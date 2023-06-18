@@ -26,9 +26,9 @@ func SetUserLocation(c *gin.Context) {
 	}
 	err := redis.RedisGeoAdd("userGeo", locations...)
 	if err != nil {
-		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": 1, "msg": "success"})
+	c.JSON(http.StatusOK, gin.H{"code": 1, "msg": "success"})
 }
 
 // 获取指定经纬度中心半径50km内的点,返回的单位是 km
@@ -47,11 +47,11 @@ func GetUserLocationRadius(c *gin.Context) {
 	if err != nil {
 		// 处理错误
 		log.Println(err)
-		c.JSON(http.StatusCreated, gin.H{"code": 0, "msg": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": err.Error()})
 		return
 	}
 	for _, location := range locations {
 		log.Println(location.Name, location.Longitude, location.Latitude)
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": 1, "data": locations, "msg": "success"})
+	c.JSON(http.StatusOK, gin.H{"code": 1, "data": locations, "msg": "success"})
 }
