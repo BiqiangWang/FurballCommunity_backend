@@ -23,7 +23,6 @@ func AddPet(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 		return
 	}
-
 	if err := models.AddPet(&pet); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
@@ -77,11 +76,9 @@ func DeletePet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
 		return
 	}
-
 	if err := models.DeleteOrderOfPet(uint(petID)); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	}
-
 	if err := models.DeletePet(id); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
@@ -127,7 +124,7 @@ func GetPetList(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param   id    path    uint     true      "id"
-// @Param   user    body    string     true      "new_pet_info"
+// @Param   pet    body    string     true      "new_pet_info"
 // @Success 200 {string} string	"ok"
 // @Router /v1/pet/updatePetInfo/{id} [put]
 func UpdatePetInfo(c *gin.Context) {
@@ -141,19 +138,16 @@ func UpdatePetInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
 		return
 	}
-
 	pet, err := models.GetPetInfoByID(uint(petId))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 		return
 	}
-
 	e := c.BindJSON(&pet)
 	if e != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": e.Error()})
 		return
 	}
-
 	if err := models.UpdatePetInfo(pet); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {

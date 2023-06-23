@@ -66,6 +66,13 @@ func SetupRouter() *gin.Engine {
 		orderCmt.POST("/create", controller.CreateOrderComment)
 		orderCmt.GET("/getOrderCmtList/:order_id", controller.GetCommentListOfOrder)
 		orderCmt.DELETE("/deleteOrderCmt/:order_cmt_id", controller.DeleteOrderCmt)
+
+		blog := v1.Group("/blog")
+		blog.POST("/create", controller.CreateBlog)
+		blog.GET("getBlogList", controller.GetBlogList)
+		blog.GET("/getUserBlog/:id", controller.GetBlogListOfUser)
+		blog.GET("/info/:id", controller.GetBlogInfo)
+		blog.PUT("/info/:id", controller.UpdateBlog)
 	}
 
 	// 第二次迭代

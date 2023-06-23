@@ -8,12 +8,12 @@ import (
 type Blog struct {
 	BlogID      uint      `gorm:"primary_key" json:"blog_id"`
 	UserID      uint      `json:"user_id"`
-	Title       uint      `json:"title"`
+	Title       string    `json:"title"`
 	Content     string    `json:"content"`
 	Like        uint      `json:"like"`
 	PublishTime time.Time `json:"publish_time" gorm:"default:CURRENT_TIMESTAMP"`
-	BannerList  []string  `json:"banner_list"`
 	User        User      `gorm:"foreign_key:UserID"`
+	//BannerList  []string  `json:"banner_list"`
 }
 
 // BelongsTo 在Blog模型中定义BelongsTo方法，表示blog属于一个user
@@ -38,6 +38,14 @@ func GetBlogListOfUser(userID uint) (blogList []*Blog, err error) {
 		return nil, err
 	}
 	return blogList, nil
+}
+
+func GetBlogInfo(blogID uint) (blog *Blog, err error) {
+	blog = new(Blog)
+	if err = database.DB.Where("blog_id = ?", blogID).First(blog).Error; err != nil {
+		return nil, err
+	}
+	return
 }
 
 func UpdateBlog(blog *Blog) (err error) {
