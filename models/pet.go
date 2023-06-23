@@ -73,7 +73,6 @@ func UpdatePetInfo(pet *Pet) (err error) {
 // 通过宠物id获取宠物信息
 func GetPetInfoByID(petID uint) (pet *Pet, err error) {
 	pet = new(Pet)
-	//var userBase UserBase
 	if err = database.DB.Preload("User", func(db *gorm.DB) *gorm.DB {
 		return database.DB.Model(&User{}).Find(&UserBase{})
 	}).Preload("Orders", func(db *gorm.DB) *gorm.DB {

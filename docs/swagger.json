@@ -62,6 +62,166 @@
                 }
             }
         },
+        "/v1/blog/create": {
+            "post": {
+                "description": "创建一个社区文章 eg：{\"user_id\":2, \"title\":\"标题\", \"content\": \"hhh\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "创建社区文章",
+                "parameters": [
+                    {
+                        "description": "userid + title + content",
+                        "name": "blog",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/blog/getBlogList": {
+            "get": {
+                "description": "获取所有社区文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "获取社区文章列表",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/blog/getUserBlog/{id}": {
+            "get": {
+                "description": "通过用户id获取用户文章列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "获取用户文章列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/blog/info/{id}": {
+            "get": {
+                "description": "通过blog_id获取文章信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "获取文章信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "blog_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "通过id，更新blog，包括内容和标题等 eg：{\"title\":\"wangwang\", \"content\":\"hhh\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "更新社区文章",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "new_blog_info",
+                        "name": "blog",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/order/create": {
             "post": {
                 "description": "根据用户id，创建一个新的订单 eg：{ \"pet_id\":3, \"announcer_id\":2 }",
@@ -429,41 +589,7 @@
                     },
                     {
                         "description": "new_pet_info",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user//loginWithPhone": {
-            "post": {
-                "description": "通过id和pw登录 eg：{ \"phone\":\"13533337492\", \"code\":\"123456\" }",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "手机验证码登录",
-                "parameters": [
-                    {
-                        "description": "phone+code",
-                        "name": "user",
+                        "name": "pet",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -542,6 +668,40 @@
                 "parameters": [
                     {
                         "description": "account+password",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/loginWithPhone": {
+            "post": {
+                "description": "通过id和pw登录 eg：{ \"phone\":\"13533337492\", \"code\":\"123456\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "手机验证码登录",
+                "parameters": [
+                    {
+                        "description": "phone+code",
                         "name": "user",
                         "in": "body",
                         "required": true,
