@@ -61,6 +61,7 @@ func SetupRouter() *gin.Engine {
 		order.GET("getOrderOfPet/:pet_id", controller.GetOrderOfPet)
 		order.GET("/getOrderInfoById/:order_id", controller.GetOrderInfoById)
 		order.PUT("/updateOrderInfo/:order_id", controller.UpdateOrderInfo)
+		order.DELETE("/delete/:order_id", controller.DeleteOrder)
 
 		orderCmt := v1.Group("/orderCmt")
 		orderCmt.POST("/create", controller.CreateOrderComment)
@@ -73,6 +74,13 @@ func SetupRouter() *gin.Engine {
 		blog.GET("/getUserBlog/:id", controller.GetBlogListOfUser)
 		blog.GET("/info/:id", controller.GetBlogInfo)
 		blog.PUT("/info/:id", controller.UpdateBlog)
+		blog.PUT("/like", controller.LikeBlog)
+		blog.DELETE("/delete/:blog_id", controller.DeleteBlog)
+
+		blogCmt := v1.Group("/blogCmt")
+		blogCmt.POST("/create", controller.CreateBlogComment)
+		blogCmt.GET("/getList", controller.GetCommentListOfBlog)
+		blogCmt.DELETE("/delete", controller.DeleteBlogCmt)
 	}
 
 	// 第二次迭代

@@ -2,6 +2,7 @@ package models
 
 import (
 	"FurballCommunity_backend/config/database"
+	"strconv"
 	"time"
 )
 
@@ -19,6 +20,11 @@ type Blog struct {
 // BelongsTo 在Blog模型中定义BelongsTo方法，表示blog属于一个user
 func (blog *Blog) BelongsTo() interface{} {
 	return &User{}
+}
+
+// HasMany 在Order模型中定义HasMany方法，表示一个blog拥有多个blogCmt
+func (blog *Blog) HasMany() interface{} {
+	return &[]BlogCmt{}
 }
 
 func CreateBlog(blog *Blog) (err error) {
@@ -53,5 +59,39 @@ func UpdateBlog(blog *Blog) (err error) {
 		"content": blog.Content,
 		"Title":   blog.Title,
 	}).Error
+	return
+}
+
+func GetBlogLike(blogID uint) (like uint, err error) {
+	if err = database.DB.Where("blog_id = ?", blogID).Select("like").First(like).Error; err != nil {
+		return like, err
+	}
+	return
+}
+
+func LikeBlog(blog *Blog) (err error) {
+	err = database.DB.Model(&blog).Updates(map[string]interface{}{
+		"like": blog.Like + 1,
+	}).Error
+	return
+}
+
+func AddToUserLikedList(user *User, blogID uint) (err error) {
+	user.LikedBlog = user.LikedBlog + "," + strconv.Itoa(int(blogID))
+	err = database.DB.Model(&user).Updates(map[string]interface{}{
+		"liked_blog": user.LikedBlog,
+	}).Error
+	return
+}
+
+func UnLikeBlog(blog *Blog) (err error) {
+	err = database.DB.Model(&blog).Updates(map[string]interface{}{
+		"like": blog.Like - 1,
+	}).Error
+	return
+}
+
+func DeleteBlog(blogID uint) (err error) {
+	err = database.DB.Delete(&Blog{}, blogID).Error
 	return
 }

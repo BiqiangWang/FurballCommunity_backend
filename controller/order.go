@@ -152,3 +152,32 @@ func GetOrderInfoById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"code": reStatusSuccess, "msg": "成功获取订单信息", "order": order})
 }
+
+// DeleteOrder
+// @Summary 删除订单
+// @Description 根据订单id删除订单
+// @Tags Order
+// @Accept  json
+// @Produce  json
+// @Param   order_id    path    uint     true      "order_id"
+// @Router /v1/order/delete/{order_id} [delete]
+func DeleteOrder(c *gin.Context) {
+	id, ok := c.Params.Get("order_id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	orderId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	if err := models.DeleteOrder(uint(orderId)); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": reStatusSuccess,
+			"msg":  "删除成功",
+		})
+	}
+}

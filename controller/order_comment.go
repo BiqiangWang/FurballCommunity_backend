@@ -57,7 +57,7 @@ func GetCommentListOfOrder(c *gin.Context) {
 
 // DeleteOrderCmt
 // @Summary 删除订单评论
-// @Description 通过orderCmtID，删除宠物 eg：{ "orderCmtID":"5"}
+// @Description 通过orderCmtID，删除订单评论 eg：{ "orderCmtID":"5"}
 // @Tags OrderCmt
 // @Accept  json
 // @Param   order_cmt_id    path    uint     true      "order_cmt_id"
