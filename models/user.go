@@ -2,6 +2,9 @@ package models
 
 import (
 	"FurballCommunity_backend/config/database"
+	"fmt"
+	"strconv"
+	"strings"
 )
 
 type User struct {
@@ -22,6 +25,7 @@ type User struct {
 	WorkTime    uint    `json:"work_time"`
 	PetNum      int     `json:"pet_num"`
 	IDCardPhoto string  `json:"id_card_photo"`
+	LikedBlog   string  `json:"liked_blog" gorm:"-"`
 }
 
 // HasMany 在User模型中定义HasMany方法，表示一个User拥有多个Pet
@@ -109,5 +113,31 @@ func UpdateUserInfo(user *User) (err error) {
 		"pet_num":       user.PetNum,
 		"ID_card_photo": user.IDCardPhoto,
 	}).Error
+	return
+}
+
+func convertStringSliceToUintSlice(strSlice []string) ([]uint, error) {
+	uintSlice := make([]uint, 0, len(strSlice))
+	for _, str := range strSlice {
+		uintVal, err := strconv.ParseUint(str, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		uintSlice = append(uintSlice, uint(uintVal))
+	}
+	return uintSlice, nil
+}
+
+func GetUserLikedBlog(userID uint) (likedBlog []uint, err error) {
+	var likedBlogStr string
+	if err = database.DB.Where("user_id = ?", userID).First(likedBlogStr).Error; err != nil {
+		return nil, err
+	}
+	likedBlogChar := strings.Split(likedBlogStr, ",")
+	likedBlog, err = convertStringSliceToUintSlice(likedBlogChar)
+	if err != nil {
+		fmt.Println("转换失败：", err)
+		return
+	}
 	return
 }

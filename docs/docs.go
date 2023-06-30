@@ -16,6 +16,40 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/BlogCmt/create": {
+            "post": {
+                "description": "根据用户id、博客id，添加一个新的评论 eg：{ \"user_id\":1, \"blog_id\":2, \"content\":\"文章很有用\" }",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BlogCmt"
+                ],
+                "summary": "创建博客评论",
+                "parameters": [
+                    {
+                        "description": "userid + blogId + content",
+                        "name": "blogCmt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/api/getCaptcha": {
             "get": {
                 "description": "获取一张图形验证码，同时返回captchaId",
@@ -95,6 +129,38 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/blog/delete/{blog_id}": {
+            "delete": {
+                "description": "通过blog_id删除博客",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "删除博客",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "blog_id",
+                        "name": "blog_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -233,6 +299,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/blog/like": {
+            "put": {
+                "description": "通过用户id和博客id完成点赞博客操作",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blog"
+                ],
+                "summary": "点赞博客（暂不可用）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user_id",
+                        "name": "userid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "blog_id",
+                        "name": "blogid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/blogCmt/delete/{blog_cmt_id}": {
+            "delete": {
+                "description": "通过blogCmtID，删除文章评论 eg：{ \"blogCmtID\":\"5\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BlogCmt"
+                ],
+                "summary": "删除文章评论",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "blog_cmt_id",
+                        "name": "blog_cmt_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/blogCmt/getList/{blog_id}": {
+            "get": {
+                "description": "根据博客id获取评论列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BlogCmt"
+                ],
+                "summary": "获取文章的评论列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "blog_id",
+                        "name": "blog_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/v1/order/create": {
             "post": {
                 "description": "根据用户id，创建一个新的订单 eg：{ \"pet_id\":3, \"announcer_id\":2 }",
@@ -265,6 +417,31 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/v1/order/delete/{order_id}": {
+            "delete": {
+                "description": "根据订单id删除订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "删除订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order_id",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
             }
         },
         "/v1/order/getOrderInfoById/{order_id}": {
@@ -419,7 +596,7 @@ const docTemplate = `{
         },
         "/v1/orderCmt/deleteOrderCmt/{order_cmt_id}": {
             "delete": {
-                "description": "通过orderCmtID，删除宠物 eg：{ \"orderCmtID\":\"5\"}",
+                "description": "通过orderCmtID，删除订单评论 eg：{ \"orderCmtID\":\"5\"}",
                 "consumes": [
                     "application/json"
                 ],
