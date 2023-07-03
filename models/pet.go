@@ -18,7 +18,7 @@ type Pet struct {
 	Sterilization int     `json:"sterilization"`
 	Breed         string  `json:"breed"`
 	Health        string  `json:"health"`
-	// photo entry have not been added in this table
+	Avatar        string  `json:"avatar"`
 }
 
 // BelongsTo 在Pet模型中定义BelongsTo方法，表示Pet属于一个User
