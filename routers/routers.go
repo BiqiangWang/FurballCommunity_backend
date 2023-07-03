@@ -17,7 +17,7 @@ func SetupRouter() *gin.Engine {
 	//设置默认路由当访问一个错误网站时返回
 	router.NoRoute(controller.NotFound)
 	// 提供静态文件服务 前一个路径为路由路径，后一个路径为文件目录路径
-	router.Static("/pubilc/img", "../img")
+	router.Static("/public/img", "../img")
 	router.Use(gin.Logger()) // 设置 gin 的日志级别为 Debug
 	// router.Use(middleware.Next()) //添加跨域处理
 
@@ -44,6 +44,7 @@ func SetupRouter() *gin.Engine {
 		{
 			user.PUT("/updateUsername/:id", controller.UpdateUserName)
 			user.PUT("/updatePassword/:id", controller.UpdatePassword)
+			user.PUT("/updateUserInfo/:id", controller.UpdateUserInfo)
 			user.DELETE("/deleteUser/:id", controller.DeleteUser)
 			user.GET("/getUserList", controller.GetUserList)
 		}
