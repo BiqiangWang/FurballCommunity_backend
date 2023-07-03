@@ -23,6 +23,10 @@ func main() {
 	if err != nil {
 		return
 	}
+	e := database.DB.AutoMigrate(&models.BlogCmt{})
+	if e != nil {
+		return
+	}
 
 	//database.DB.Model(&models.Pet{}).Association("Orders")
 
