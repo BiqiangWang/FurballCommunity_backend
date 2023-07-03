@@ -2,9 +2,10 @@ package controller
 
 import (
 	"FurballCommunity_backend/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateOrder
@@ -120,8 +121,8 @@ func UpdateOrderInfo(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": reStatusSuccess,
-			"meg":  "成功修改订单信息！",
-			"info": order,
+			"msg":  "成功修改订单信息！",
+			"data": order,
 		})
 	}
 }
