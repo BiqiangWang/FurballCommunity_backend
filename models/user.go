@@ -43,7 +43,7 @@ type UserBase struct {
 
 // 获取用户列表
 func GetUserList() (userList []*User, err error) {
-	if err = database.DB.Select("user_id", "account", "username").Find(&userList).Error; err != nil {
+	if err = database.DB.Find(&userList).Error; err != nil {
 		return nil, err
 	}
 	return
@@ -97,6 +97,7 @@ func DeleteUser(id string) (err error) {
 func UpdateUserInfo(user *User) (err error) {
 	err = database.DB.Model(&user).Updates(map[string]interface{}{
 		"phone":         user.Phone,
+		"username":      user.Username,
 		"authority":     user.Authority,
 		"gender":        user.Gender,
 		"address":       user.Address,
