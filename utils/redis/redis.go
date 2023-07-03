@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -9,7 +10,7 @@ import (
 
 // 定义地理位置信息结构体
 type Location struct {
-	Name      string  // 地点名称
+	Name      string  // 地点名称(user_id)
 	Longitude float64 // 地点经度
 	Latitude  float64 // 地点纬度
 	Distance  float64 //距离中心点距离
@@ -49,6 +50,7 @@ func RedisDel(name ...string) error {
 func RedisGeoAdd(key string, locations ...*Location) error {
 	var err error
 	for _, location := range locations {
+		log.Println(location)
 		geoLocation := &redis.GeoLocation{
 			Name:      location.Name,
 			Longitude: location.Longitude,

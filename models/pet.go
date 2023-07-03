@@ -2,8 +2,9 @@ package models
 
 import (
 	"FurballCommunity_backend/config/database"
-	"gorm.io/gorm"
 	"log"
+
+	"gorm.io/gorm"
 )
 
 type Pet struct {
@@ -51,6 +52,7 @@ func GetPetList(userID uint) (petList []*Pet, err error) {
 	if err := database.DB.Where("user_id = ?", userID).Find(&petList).Error; err != nil {
 		return nil, err
 	}
+	log.Println(petList[0])
 	return petList, nil
 }
 
@@ -65,6 +67,7 @@ func UpdatePetInfo(pet *Pet) (err error) {
 		"sterilization": pet.Sterilization,
 		"breed":         pet.Breed,
 		"health":        pet.Health,
+		"avatar":        pet.Avatar,
 	}).Error
 	return
 }

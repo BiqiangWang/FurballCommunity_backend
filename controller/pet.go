@@ -2,9 +2,10 @@ package controller
 
 import (
 	"FurballCommunity_backend/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AddPet
@@ -153,8 +154,8 @@ func UpdatePetInfo(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": reStatusSuccess,
-			"meg":  "成功修改宠物信息！",
-			"info": pet,
+			"msg":  "成功修改宠物信息！",
+			"data": pet,
 		})
 	}
 }

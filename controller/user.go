@@ -5,6 +5,7 @@ import (
 	"FurballCommunity_backend/utils/redis"
 	"FurballCommunity_backend/utils/token"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -381,13 +382,14 @@ func UpdateUserInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": e.Error()})
 		return
 	}
+	log.Println(user)
 	if err := models.UpdateUserInfo(user); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": reStatusSuccess,
-			"meg":  "成功修改用户信息！",
-			"info": user,
+			"msg":  "成功修改用户信息！",
+			"user": user,
 		})
 	}
 

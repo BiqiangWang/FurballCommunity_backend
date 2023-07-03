@@ -2,10 +2,11 @@ package controller
 
 import (
 	"FurballCommunity_backend/models"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateBlog
@@ -115,8 +116,8 @@ func UpdateBlog(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": reStatusSuccess,
-			"meg":  "成功修改文章！",
-			"blog": blog,
+			"msg":  "成功修改文章！",
+			"data": blog,
 		})
 	}
 }
@@ -148,8 +149,8 @@ func GetBlogInfo(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": reStatusSuccess,
-			"meg":  "成功获取blog！",
-			"blog": blog,
+			"msg":  "成功获取blog！",
+			"data": blog,
 		})
 	}
 }
@@ -224,7 +225,7 @@ func LikeBlog(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusOK, gin.H{
 				"code": reStatusSuccess,
-				"meg":  "点赞成功！",
+				"msg":  "点赞成功！",
 			})
 		}
 
