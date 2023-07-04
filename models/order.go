@@ -101,3 +101,10 @@ func DeleteOrder(orderID uint) (err error) {
 	err = database.DB.Delete(&Order{}, orderID).Error
 	return
 }
+
+func GetOrderOfReceiver(receiverID uint) (order *Order, err error) {
+	if err := database.DB.Where("receiver_id = ?", receiverID).Find(&order).Error; err != nil {
+		return nil, err
+	}
+	return order, nil
+}

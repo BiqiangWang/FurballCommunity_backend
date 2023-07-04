@@ -508,6 +508,31 @@
                 "responses": {}
             }
         },
+        "/v1/order/getOrderOfReceiver/{receiver_id}": {
+            "get": {
+                "description": "根据接收者id获取其订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "获取接收者订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "receiver_id",
+                        "name": "receiver_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/v1/order/updateOrderInfo/{order_id}": {
             "put": {
                 "description": "通过订单id，更新接收者、开始结束时间、地点、健康、订单状态、备注、价格、评价、评分等 eg：{\"receiver_id\":1}",

@@ -182,3 +182,33 @@ func DeleteOrder(c *gin.Context) {
 		})
 	}
 }
+
+// GetOrderOfReceiver
+// @Summary 获取接收者订单
+// @Description 根据接收者id获取其订单
+// @Tags Order
+// @Accept  json
+// @Produce  json
+// @Param   receiver_id    path    uint     true      "receiver_id"
+// @Router /v1/order/getOrderOfReceiver/{receiver_id} [get]
+func GetOrderOfReceiver(c *gin.Context) {
+	id, ok := c.Params.Get("receiver_id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": "无效的id"})
+		return
+	}
+	receiverId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": reStatusError, "msg": "转换后无效的id"})
+		return
+	}
+	if order, err := models.GetOrderOfReceiver(uint(receiverId)); err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": reStatusError, "msg": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":  reStatusSuccess,
+			"msg":   "成功获取接收者订单",
+			"order": order,
+		})
+	}
+}

@@ -337,6 +337,23 @@ paths:
       summary: 获取宠物的订单
       tags:
       - Order
+  /v1/order/getOrderOfReceiver/{receiver_id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据接收者id获取其订单
+      parameters:
+      - description: receiver_id
+        in: path
+        name: receiver_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取接收者订单
+      tags:
+      - Order
   /v1/order/updateOrderInfo/{order_id}:
     put:
       consumes:

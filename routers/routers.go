@@ -67,6 +67,7 @@ func SetupRouter() *gin.Engine {
 		order.GET("/getOrderInfoById/:order_id", controller.GetOrderInfoById)
 		order.PUT("/updateOrderInfo/:order_id", controller.UpdateOrderInfo)
 		order.DELETE("/delete/:order_id", controller.DeleteOrder)
+		order.GET("/getOrderOfReceiver/:receiver_id", controller.GetOrderOfReceiver)
 
 		orderCmt := v1.Group("/orderCmt")
 		orderCmt.POST("/create", controller.CreateOrderComment)
