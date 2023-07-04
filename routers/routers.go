@@ -43,6 +43,7 @@ func SetupRouter() *gin.Engine {
 		user.PUT("/updateUserInfo/:id", controller.UpdateUserInfo)
 		user.DELETE("/deleteUser/:id", controller.DeleteUser)
 		user.GET("/getUserList", controller.GetUserList)
+		user.GET("/getUserInfoById/:id", controller.GetUserInfo)
 		// 【需要token】中间件验证的路由
 		/* user.Use(middleware.CheckTokenAuth())
 		{

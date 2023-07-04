@@ -27,6 +27,7 @@ type Order struct {
 	Score           float64    `json:"score"`
 	CheckInStatus   string     `json:"check_in_status"`
 	CheckInPictures string     `json:"check_in_pictures"`
+	Phone           string     `json:"phone"`
 }
 
 // BelongsTo 在Order模型中定义BelongsTo方法，表示Order属于一个pet
