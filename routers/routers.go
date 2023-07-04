@@ -3,7 +3,6 @@ package routers
 import (
 	"FurballCommunity_backend/controller"
 	_ "FurballCommunity_backend/docs"
-	"FurballCommunity_backend/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -39,15 +38,20 @@ func SetupRouter() *gin.Engine {
 		user.POST("/login", controller.Login)                   //账号密码登录
 		user.POST("/loginWithPhone", controller.LoginWithPhone) //手机号登录（自动注册）
 		user.POST("/register", controller.Register)
+		user.PUT("/updateUsername/:id", controller.UpdateUserName)
+		user.PUT("/updatePassword/:id", controller.UpdatePassword)
+		user.PUT("/updateUserInfo/:id", controller.UpdateUserInfo)
+		user.DELETE("/deleteUser/:id", controller.DeleteUser)
+		user.GET("/getUserList", controller.GetUserList)
 		// 【需要token】中间件验证的路由
-		user.Use(middleware.CheckTokenAuth())
+		/* user.Use(middleware.CheckTokenAuth())
 		{
 			user.PUT("/updateUsername/:id", controller.UpdateUserName)
 			user.PUT("/updatePassword/:id", controller.UpdatePassword)
 			user.PUT("/updateUserInfo/:id", controller.UpdateUserInfo)
 			user.DELETE("/deleteUser/:id", controller.DeleteUser)
 			user.GET("/getUserList", controller.GetUserList)
-		}
+		} */
 
 		pet := v1.Group("/pet")
 		pet.POST("/add", controller.AddPet)
