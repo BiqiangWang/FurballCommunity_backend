@@ -2,9 +2,10 @@ package models
 
 import (
 	"FurballCommunity_backend/config/database"
-	"gorm.io/gorm"
 	"log"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Order struct {
@@ -15,8 +16,8 @@ type Order struct {
 	Pet             Pet        `gorm:"foreign_key:PetID"`
 	OrderCmts       []OrderCmt `gorm:"foreign_key:OrderID"`
 	AnnounceTime    time.Time  `json:"announce_time" gorm:"default:CURRENT_TIMESTAMP"`
-	StartTime       time.Time  `json:"start_time" gorm:"default:CURRENT_TIMESTAMP"`
-	EndTime         time.Time  `json:"end_time" gorm:"default:CURRENT_TIMESTAMP"`
+	StartTime       string     `json:"start_time"`
+	EndTime         string     `json:"end_time"`
 	Place           string     `json:"place"`
 	PetHealth       string     `json:"pet_health"`
 	Status          int        `json:"status"`
