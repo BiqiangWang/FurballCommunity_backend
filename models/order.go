@@ -103,7 +103,7 @@ func DeleteOrder(orderID uint) (err error) {
 	return
 }
 
-func GetOrderOfReceiver(receiverID uint) (order *Order, err error) {
+func GetOrderOfReceiver(receiverID uint) (order []*Order, err error) {
 	if err := database.DB.Where("receiver_id = ?", receiverID).Find(&order).Error; err != nil {
 		return nil, err
 	}
