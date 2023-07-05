@@ -52,11 +52,11 @@
 
 - order
 
-| Order_id | announcer_id | Receiver_id   | Pet_id | Announce_time | Start_time | End_time | Place  | Pet_health | Status                                        | Remark | price | Evaluation    | score | phone    |
-| -------- | ------------ | ------------- | ------ | ------------- | ---------- | -------- | ------ | ---------- | --------------------------------------------- | ------ | ----- | ------------- | ----- | -------- |
-| 订单id   | 发布者       | 接收者        | 宠物id | 发布时间      | 开始时间   | 结束时间 | 地点   | 健康状况   | 订单    状态                                  | 备注   | 报酬  | 评价          | 评分  | 联系电话 |
-| int      | int          | int           | int    | time          | string     | string   | string | string     | int                                           | string | Int   | string        | float | string   |
-|          |              | 当status为123 |        |               |            |          |        |            | 0：待付款   1：进行中   2：待评价   3：已完成 |        |       | 仅当status为3 |       |          |
+| Order_id | announcer_id | Receiver_id   | Pet_id | Announce_time | Start_time | End_time | Place  | Pet_health | Status                                        | Remark | price | Evaluation    | score | check_in_status | check_in_pictures | phone    |
+| -------- | ------------ | ------------- | ------ | ------------- | ---------- | -------- | ------ | ---------- | --------------------------------------------- | ------ | ----- | ------------- | ----- | --------------- | ----------------- | -------- |
+| 订单id   | 发布者       | 接收者        | 宠物id | 发布时间      | 开始时间   | 结束时间 | 地点   | 健康状况   | 订单    状态                                  | 备注   | 报酬  | 评价          | 评分  | 打卡状态        | 打卡图片          | 联系电话 |
+| int      | int          | int           | int    | time          | string     | string   | string | string     | int                                           | string | Int   | string        | float | string          | string            | string   |
+|          |              | 当status为123 |        |               |            |          |        |            | 0：待付款   1：进行中   2：待评价   3：已完成 |        |       | 仅当status为3 |       |                 |                   |          |
 
 
 
