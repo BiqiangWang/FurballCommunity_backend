@@ -1,6 +1,8 @@
 # FurballCommunity_backend
 “Furball Community” is a community-based pet sharing and boarding platform website, which is a course design project.
 
+“毛球社区”是一个基于社区的共享宠物寄养平台，是UCAS2023春季高级软件工程课程的课程设计项目。
+
 
 ### 整体架构
 - 后端：
@@ -40,30 +42,30 @@
 
 - pet
 
-| Pet_id | User_id | Name   | Gender       | Photo  | Age  | Weight | Sterilization      | Breed  | Health   |
-| ------ | ------- | ------ | ------------ | ------ | ---- | ------ | ------------------ | ------ | -------- |
-| 宠物id | 用户id  | 宠物名 | 性别         | 照片   | 年龄 | 重量   | 是否绝育           | 品种   | 健康状况 |
-| Int    | Int     | string | int          | String | Int  | Int    | Int                | String | String   |
-|        |         |        | 0：母  1：公 |        |      |        | 0：未绝育  1：绝育 |        |          |
+| Pet_id | User_id | Name   | Gender       | Photo  | Age  | Weight | Sterilization      | Breed  | Health   | Avatar   |
+| ------ | ------- | ------ | ------------ | ------ | ---- | ------ | ------------------ | ------ | -------- | -------- |
+| 宠物id | 用户id  | 宠物名 | 性别         | 照片   | 年龄 | 重量   | 是否绝育           | 品种   | 健康状况 | 宠物头像 |
+| Int    | Int     | string | int          | String | Int  | Int    | Int                | String | String   | string   |
+|        |         |        | 0：母  1：公 |        |      |        | 0：未绝育  1：绝育 |        |          |          |
 
 
 
 - order
 
-| Order_id | Announcer_id | Receiver_id   | Pet_id | Announce_time | Start_time | End_time | Place  | Pet_health | Status                                     | Remark | price | Evaluation    | score |
-| -------- | ------------ | ------------- | ------ | ------------- | ---------- | -------- | ------ | ---------- | ------------------------------------------ | ------ | ----- | ------------- | ----- |
-| 订单id   | 发布者       | 接收者        | 宠物id | 发布时间      | 开始时间   | 结束时间 | 地点   | 健康状况   | 订单状态                                   | 备注   | 报酬  | 评价          | 评分  |
-| int      | int          | int           | int    | time          | time       | time     | string | string     | int                                        | string | Int   | string        | float |
-|          |              | 当status为123 |        |               |            |          |        |            | 0：待付款  1：进行中  2：待评价  3：已完成 |        |       | 仅当status为3 |       |
+| Order_id | announcer_id | Receiver_id   | Pet_id | Announce_time | Start_time | End_time | Place  | Pet_health | Status                                        | Remark | price | Evaluation    | score | phone    |
+| -------- | ------------ | ------------- | ------ | ------------- | ---------- | -------- | ------ | ---------- | --------------------------------------------- | ------ | ----- | ------------- | ----- | -------- |
+| 订单id   | 发布者       | 接收者        | 宠物id | 发布时间      | 开始时间   | 结束时间 | 地点   | 健康状况   | 订单    状态                                  | 备注   | 报酬  | 评价          | 评分  | 联系电话 |
+| int      | int          | int           | int    | time          | string     | string   | string | string     | int                                           | string | Int   | string        | float | string   |
+|          |              | 当status为123 |        |               |            |          |        |            | 0：待付款   1：进行中   2：待评价   3：已完成 |        |       | 仅当status为3 |       |          |
 
 
 
 - order_comment
 
-| Comment_id | Order_id | User_id | Content  | Time | Reply_userid |
-| ---------- | -------- | ------- | -------- | ---- | ------------ |
-| 订单评论id | 订单id   | 用户id  | 评论内容 | 时间 | 母评论用户id |
-| Int        | Int      | Int     | String   | Time | int          |
+| Comment_id | oeder_id | User_id | Content  | Time | Parent_id    | Is_root      |
+| ---------- | -------- | ------- | -------- | ---- | ------------ | ------------ |
+| 订单评论id | 订单id   | 用户id  | 评论内容 | 时间 | 母评论用户id | 是否为根评论 |
+| Int        | Int      | Int     | String   | Time | int          | bool         |
 
 
 
