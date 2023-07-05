@@ -104,7 +104,9 @@ func DeleteOrder(orderID uint) (err error) {
 }
 
 func GetOrderOfReceiver(receiverID uint) (order []*Order, err error) {
-	if err := database.DB.Where("receiver_id = ?", receiverID).Find(&order).Error; err != nil {
+	if err := database.DB.Preload("Pet", func(db *gorm.DB) *gorm.DB {
+		return database.DB.Model(&Pet{}).Find(&PetBase{})
+	}).Where("receiver_id = ?", receiverID).Find(&order).Error; err != nil {
 		return nil, err
 	}
 	return order, nil
